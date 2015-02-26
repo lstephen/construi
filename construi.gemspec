@@ -6,10 +6,10 @@ require 'construi/version'
 Gem::Specification.new do |spec|
   spec.name          = "construi"
   spec.version       = Construi::VERSION
-  spec.authors       = ["lestephen"]
-  spec.email         = ["lestephen@groupon.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.authors       = ["lstephen"]
+  spec.email         = ["levi.stephen@gmail.com"]
+  spec.summary       = %q{Build tool using Docker to specify build environment}
+  spec.description   = %q{Build tool using Docker to specify build environment}
   spec.homepage      = ""
   spec.license       = "MIT"
 

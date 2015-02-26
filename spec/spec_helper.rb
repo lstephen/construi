@@ -1,8 +1,6 @@
 
 require 'codeclimate-test-reporter'
 
-require 'construi'
-
 CodeClimate::TestReporter.start
 
 RSpec.configure do |config|
