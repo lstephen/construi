@@ -1,26 +1,35 @@
+require 'construi/config'
+
 require 'docker'
 require 'yaml'
 
 module Construi
 
-  def self.run
-    Docker.validate_version!
-    Docker.options[:read_timeout] = 60
-    Docker.options[:chunk_size] = 8
+  class Runner
+    def initialize(config)
+      @config = config
+    end
 
-    config = YAML.load_file('construi.yml')
+    def run(target)
+      Docker.validate_version!
+      Docker.options[:read_timeout] = 60
+      Docker.options[:chunk_size] = 8
 
-    puts config
-    puts Dir.pwd
+      config = Config.load('construi.yml')
 
-    image = Docker::Image.create('fromImage' => config['image'])
+      puts Dir.pwd
 
-    config['targets']['build'].each do |cmd|
-      puts cmd
+      image = Docker::Image.create('fromImage' => config.image)
 
+      final = config.target(target).commands.reduce(image) { |i, c| run_cmd(i, c) }
+
+      puts final.refresh!
+    end
+
+    def run_cmd(image, cmd)
       container = Docker::Container.create(
         'Cmd' => cmd.split,
-        'Image' => image.id, 
+        'Image' => image.id,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
         'HostConfig' => { 'Binds' => ["#{Dir.pwd}:/var/workspace"] })
@@ -31,13 +40,20 @@ module Construi
 
       container.wait
 
+      puts image.refresh!
+
       image = container.commit
 
       #TODO: Delete intermediate images
 
       container.delete
-    end
 
+      image
+    end
+  end
+
+  def self.run
+    Runner.new(Config.load('construi.yml')).run('build')
   end
 
 end
