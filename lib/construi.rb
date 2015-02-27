@@ -1,4 +1,5 @@
 require 'construi/config'
+require 'construi/image'
 
 require 'docker'
 require 'yaml'
@@ -15,15 +16,13 @@ module Construi
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
 
-      config = Config.load('construi.yml')
-
       puts Dir.pwd
 
-      image = Docker::Image.create('fromImage' => config.image)
+      image = Image.create(@config.image)
 
-      final = config.target(target).commands.reduce(image) { |i, c| run_cmd(i, c) }
+      final = @config.target(target).commands.reduce(image) { |i, c| run_cmd(i, c) }
 
-      puts final.refresh!
+      final.delete unless final.tagged?
     end
 
     def run_cmd(image, cmd)
@@ -40,9 +39,9 @@ module Construi
 
       container.wait
 
-      puts image.refresh!
+      image.delete unless image.tagged?
 
-      image = container.commit
+      image = Image.wrap(container.commit)
 
       #TODO: Delete intermediate images
 
