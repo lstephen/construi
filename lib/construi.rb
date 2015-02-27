@@ -12,16 +12,14 @@ module Construi
       @config = config
     end
 
-    def run(target)
+    def run(targets)
       Docker.validate_version!
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
 
-      puts Dir.pwd
-
       initial_image = Image.create(@config.image)
 
-      commands = @config.target(target).commands
+      commands = targets.map { |t| @config.target(t).commands }.flatten
 
       final_image = commands.reduce(IntermediateImage.seed(initial_image)) do |image, command|
         image.run(command)
@@ -31,8 +29,8 @@ module Construi
     end
   end
 
-  def self.run
-    Runner.new(Config.load('construi.yml')).run('build')
+  def self.run(targets)
+    Runner.new(Config.load('construi.yml')).run(targets)
   end
 
 end
