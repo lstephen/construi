@@ -19,21 +19,15 @@ module Construi
 
       puts Dir.pwd
 
-      image = Image.create(@config.image)
+      initial_image = Image.create(@config.image)
 
-      final = @config.target(target).commands.reduce(image) do |i, c|
-        begin
-          run_cmd(i, c)
-        ensure
-          i.delete unless image.tagged?
-        end
+      commands = @config.target(target).commands
+
+      final_image = commands.reduce(IntermediateImage.seed(initial_image)) do |image, command|
+        image.run(command)
       end
 
-      final.delete unless final.tagged?
-    end
-
-    def run_cmd(image, cmd)
-      Container.create(image, cmd).run
+      final_image.delete
     end
   end
 
