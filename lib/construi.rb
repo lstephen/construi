@@ -1,4 +1,5 @@
 require 'construi/config'
+require 'construi/container'
 require 'construi/image'
 
 require 'docker'
@@ -20,34 +21,19 @@ module Construi
 
       image = Image.create(@config.image)
 
-      final = @config.target(target).commands.reduce(image) { |i, c| run_cmd(i, c) }
+      final = @config.target(target).commands.reduce(image) do |i, c|
+        begin
+          run_cmd(i, c)
+        ensure
+          i.delete unless image.tagged?
+        end
+      end
 
       final.delete unless final.tagged?
     end
 
     def run_cmd(image, cmd)
-      container = Docker::Container.create(
-        'Cmd' => cmd.split,
-        'Image' => image.id,
-        'Tty' => false,
-        'WorkingDir' => '/var/workspace',
-        'HostConfig' => { 'Binds' => ["#{Dir.pwd}:/var/workspace"] })
-
-      container.tap(&:start).attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
-
-      container.start
-
-      container.wait
-
-      image.delete unless image.tagged?
-
-      image = Image.wrap(container.commit)
-
-      #TODO: Delete intermediate images
-
-      container.delete
-
-      image
+      Container.create(image, cmd).run
     end
   end
 

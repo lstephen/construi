@@ -20,7 +20,7 @@ module Construi
       @image.info['RepoTags'] != '<none>:<none>'
     end
 
-    def self.create(image) 
+    def self.create(image)
       wrap Docker::Image.create('fromImage' => image)
     end
 
