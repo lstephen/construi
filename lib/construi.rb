@@ -13,6 +13,8 @@ module Construi
     end
 
     def run(targets)
+      puts "Docker running at #{Docker.url}"
+
       Docker.validate_version!
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
