@@ -2,5 +2,6 @@ image: ruby:1.9
 
 targets:
   build:
+    - ls
     - bundle install --path=vendor/bundle
     - bundle exec rake spec
