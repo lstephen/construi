@@ -17,7 +17,7 @@ module Construi
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
 
-      initial_image = Image.create(@config.image)
+      initial_image = Image.create(@config.image) { |s| puts s }
 
       commands = targets.map { |t| @config.target(t).commands }.flatten
 
