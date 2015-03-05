@@ -13,6 +13,9 @@ module Construi
     end
 
     def run(targets)
+      docker_host = ENV['DOCKER_HOST']
+      Docker.url = docker_host unless docker_host.nil?
+
       puts "Docker running at #{Docker.url}"
 
       Docker.validate_version!
