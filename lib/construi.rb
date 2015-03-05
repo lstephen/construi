@@ -13,11 +13,13 @@ module Construi
     end
 
     def run(targets)
+      puts "Docker running at #{Docker.url}"
+
       Docker.validate_version!
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
 
-      initial_image = Image.create(@config.image)
+      initial_image = Image.create(@config.image) { |s| puts s }
 
       commands = targets.map { |t| @config.target(t).commands }.flatten
 
