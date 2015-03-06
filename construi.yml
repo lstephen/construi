@@ -6,5 +6,11 @@ environment:
 
 targets:
   build:
+    - env
     - bundle install --path=vendor/bundle
     - bundle exec rake spec
+
+  install:
+    - bundle install --path=vendor/bundle
+    - bundle exec rake install
+

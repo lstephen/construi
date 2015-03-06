@@ -38,7 +38,7 @@ module Construi
       wrap Docker::Container.create(
         'Cmd' => cmd.split,
         'Image' => image.id,
-        'Env' => env,
+        'Env' => env.to_json,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
         'HostConfig' => { 'Binds' => ["#{Dir.pwd}:/var/workspace"] })

@@ -19,13 +19,14 @@ module Construi
     end
 
     def env
-      @yaml['environment'].reduce({}) do |acc, e|
+      @yaml['environment'].reduce([]) do |acc, e|
         key = e.partition('=').first
         value = e.partition('=').last
 
         value = ENV[key] if value.empty?
 
-        acc.merge({ key => value })
+        acc << "#{key}=#{value}" unless value.nil? or value.empty?
+        acc
       end
     end
 
