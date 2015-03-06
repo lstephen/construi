@@ -16,7 +16,7 @@ targets:
   release:
     - git checkout master
     - git pull --rebase
-    - get merge --no-ff --commit -m "Merge for release"
+    - get merge --no-ff --commit -m "Merge for release" develop
     - git push
     - git checkout develop
     - bundle install --path vendor/bundle
