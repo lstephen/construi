@@ -14,6 +14,8 @@ targets:
     - bundle exec rake install
 
   release:
+    - git config user.email levi.stephen@gmail.com  
+    - git config user.name lstephen
     - git fetch origin master
     - git merge origin/master
     - git push development:master
