@@ -14,11 +14,10 @@ targets:
     - bundle exec rake install
 
   release:
-    - git config user.email levi.stephen@gmail.com  
+    - git config user.email levi.stephen@gmail.com
     - git config user.name lstephen
-    - git fetch origin master
-    - git merge --no-ff --commit -m "Merge for release" origin/master
-    - git push development:master
+    - git merge --no-ff --commit -m "Merge for release" develop
+    - git push
     - bundle install --path vendor/bundle
     - bundle exec gem bump --version minor --push
 
