@@ -14,6 +14,13 @@ targets:
     - bundle exec rake install
 
   release:
+    - git fetch origin master
+    - git merge master
+    - git push development:master
+    - bundle install --path vendor/bundle
+    - bundle exec gem bump --version minor --push
+
+  old_release:
     - git checkout master
     - git pull --rebase
     - git merge --no-ff --commit -m "Merge for release" develop
