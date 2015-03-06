@@ -29,7 +29,7 @@ module Construi
 
       final_image = commands.reduce(IntermediateImage.seed(initial_image)) do |image, command|
         puts "Running command: #{command}"
-        image.run(command)
+        image.run(command, @config.env)
       end
 
       final_image.delete

@@ -18,6 +18,17 @@ module Construi
       @yaml['image']
     end
 
+    def env
+      @yaml['environment'].reduce({}) do |acc, e|
+        key = e.partition('=').first
+        value = e.partition('=').last
+
+        value = ENV[key] if value.empty?
+
+        acc.merge({ key => value })
+      end
+    end
+
     def target(target)
       Target.new(@yaml['targets'][target])
     end

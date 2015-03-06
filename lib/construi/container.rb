@@ -34,10 +34,11 @@ module Construi
       commit
     end
 
-    def self.create(image, cmd)
+    def self.create(image, cmd, env)
       wrap Docker::Container.create(
         'Cmd' => cmd.split,
         'Image' => image.id,
+        'Env' => env,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
         'HostConfig' => { 'Binds' => ["#{Dir.pwd}:/var/workspace"] })
@@ -47,15 +48,15 @@ module Construi
       new container
     end
 
-    def self.use(image, cmd)
-      container = create(image, cmd)
+    def self.use(image, cmd, env)
+      container = create(image, cmd, env)
       yield container
     ensure
       container.delete unless container.nil?
     end
 
-    def self.run(image, cmd)
-      use(image, cmd, &:run)
+    def self.run(image, cmd, env)
+      use(image, cmd, env, &:run)
     end
 
   end

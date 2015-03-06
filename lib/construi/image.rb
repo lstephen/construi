@@ -21,8 +21,8 @@ module Construi
       @image.info['RepoTags'] != '<none>:<none>'
     end
 
-    def run(cmd)
-      Container.run(self, cmd)
+    def run(cmd, env)
+      Container.run(self, cmd, env)
     end
 
     def self.create(image)
@@ -50,8 +50,8 @@ module Construi
       @image = image
     end
 
-    def run(cmd)
-      map { |i| i.run(cmd) }
+    def run(cmd, env)
+      map { |i| i.run(cmd, env) }
     end
 
     def map

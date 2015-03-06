@@ -1,5 +1,9 @@
 image: ruby:1.9
 
+environment:
+  - CODECLIMATE_REPO_TOKEN
+  - COVERALLS_TOKEN
+
 targets:
   build:
     - bundle install --path=vendor/bundle
