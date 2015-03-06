@@ -13,3 +13,12 @@ targets:
     - bundle install --path=vendor/bundle
     - bundle exec rake install
 
+  release:
+    - git checkout master
+    - git pull --rebase
+    - get merge --no-ff --commit -m "Merge for release"
+    - git push
+    - git checkout develop
+    - bundle install --path vendor/bundle
+    - bundle exec gem bump --version minor --push
+
