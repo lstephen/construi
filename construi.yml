@@ -15,7 +15,7 @@ targets:
 
   release:
     - git fetch origin master
-    - git merge master
+    - git merge origin/master
     - git push development:master
     - bundle install --path vendor/bundle
     - bundle exec gem bump --version minor --push
