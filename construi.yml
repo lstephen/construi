@@ -3,6 +3,7 @@ image: ruby:1.9
 environment:
   - CODECLIMATE_REPO_TOKEN
   - COVERALLS_TOKEN
+  - RELEASE_COMMIT
 
 targets:
   build:
@@ -16,8 +17,9 @@ targets:
   release:
     - git config user.email levi.stephen@gmail.com
     - git config user.name lstephen
-    - git merge --no-ff --commit -m "Merge for release" master
-    - git push
+    - git checkout ${RELEASE_COMMIT}
+    - git merge --no-ff --commit master
+    - git push origin ${RELEASE_COMMIT}:master
     - bundle install --path vendor/bundle
     - bundle exec gem bump --version minor --push
 
