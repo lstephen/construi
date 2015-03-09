@@ -17,18 +17,8 @@ targets:
   release:
     - git config user.email levi.stephen@gmail.com
     - git config user.name lstephen
-    - git checkout ${RELEASE_COMMIT}
     - git merge --no-ff --commit master
-    - git push origin ${RELEASE_COMMIT}:master
-    - bundle install --path vendor/bundle
-    - bundle exec gem bump --version minor --push
-
-  old_release:
-    - git checkout master
-    - git pull --rebase
-    - git merge --no-ff --commit -m "Merge for release" develop
-    - git push
-    - git checkout develop
+    - git push origin ${GIT_COMMIT}:master
     - bundle install --path vendor/bundle
     - bundle exec gem bump --version minor --push
 
