@@ -10,10 +10,6 @@ targets:
     - bundle install --path=vendor/bundle
     - bundle exec rake spec
 
-  install:
-    - bundle install --path=vendor/bundle
-    - bundle exec rake install
-
   release:
     - git config user.email levi.stephen@gmail.com
     - git config user.name lstephen
