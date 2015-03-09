@@ -3,6 +3,7 @@ image: ruby:1.9
 environment:
   - CODECLIMATE_REPO_TOKEN
   - COVERALLS_TOKEN
+  - GIT_COMMIT
 
 targets:
   build:
@@ -12,4 +13,12 @@ targets:
   install:
     - bundle install --path=vendor/bundle
     - bundle exec rake install
+
+  release:
+    - git config user.email levi.stephen@gmail.com
+    - git config user.name lstephen
+    - git merge --no-ff --commit origin/master
+    - git push origin ${GIT_COMMIT}:master
+    - bundle install --path vendor/bundle
+    - bundle exec gem bump --version minor --push
 
