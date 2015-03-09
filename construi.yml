@@ -3,7 +3,7 @@ image: ruby:1.9
 environment:
   - CODECLIMATE_REPO_TOKEN
   - COVERALLS_TOKEN
-  - RELEASE_COMMIT
+  - GIT_COMMIT
 
 targets:
   build:
