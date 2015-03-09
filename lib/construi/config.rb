@@ -19,6 +19,8 @@ module Construi
     end
 
     def env
+      return [] if @yaml['environment'].nil?
+
       @yaml['environment'].reduce([]) do |acc, e|
         key = e.partition('=').first
         value = e.partition('=').last
