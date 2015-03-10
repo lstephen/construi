@@ -4,6 +4,7 @@ environment:
   - CODECLIMATE_REPO_TOKEN
   - COVERALLS_TOKEN
   - GIT_COMMIT
+  - GITHUB_TOKEN
 
 targets:
   build:
@@ -12,7 +13,10 @@ targets:
 
   release:
     - git config user.email levi.stephen@gmail.com
-    - git config user.name lstephen
+    - git config user.name jenkins
+    - git config credential.helper store --file=.git-credentials
+    - echo https://${GITHUB_TOKEN}@github.com > .git-credentials
+    - cat .git-credentials
     - git merge --no-ff --commit origin/master
     - git push origin ${GIT_COMMIT}:master
     - bundle install --path vendor/bundle
