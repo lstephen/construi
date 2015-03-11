@@ -4,7 +4,7 @@ environment:
   - CODECLIMATE_REPO_TOKEN
   - COVERALLS_TOKEN
   - GIT_COMMIT
-  - GITHUB_TOKEN
+  - GIT_SSH_KEY
 
 targets:
   build:
