@@ -12,8 +12,6 @@ targets:
     - bundle exec rake spec
 
   release:
-    - git config --replace-all credential.helper 'store --file=.git-credentials'
-    - echo https://${GITHUB_TOKEN}:x-oauth-basic@github.com > .git-credentials
     - git merge --no-ff --commit origin/master
     - git push origin ${GIT_COMMIT}:master
     - bundle install --path vendor/bundle
