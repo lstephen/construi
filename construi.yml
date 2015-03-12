@@ -12,6 +12,8 @@ targets:
     - bundle exec rake spec
 
   release:
+    - mkdir -p ~/.ssh
+    - cp ${GIT_SSH_KEY} ~/.ssh/id_rsa
     - git merge --no-ff --commit origin/master
     - git push origin ${GIT_COMMIT}:master
     - bundle install --path vendor/bundle
