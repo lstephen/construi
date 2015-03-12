@@ -13,6 +13,8 @@ targets:
     - bundle exec rake spec
 
   release:
+    - git config user.name lstephen
+    - git config user.email levi.stephen@gmail.com
     - mkdir -p ~/.ssh
     - cp ${GIT_SSH_KEY} ~/.ssh/id_rsa
     - chmod 0600 ~/.ssh/id_rsa
@@ -29,6 +31,8 @@ targets:
     - bundle exec gem bump --version minor --push
 
   deploy:
+    - git config user.name lstephen
+    - git config user.email levi.stephen@gmail.com
     - mkdir -p ~/.ssh
     - cp ${GIT_SSH_KEY} ~/.ssh/id_rsa
     - chmod 0600 ~/.ssh/id_rsa
