@@ -14,9 +14,9 @@ module Construi
     end
 
     def attach_stdout
-      @container
-        .tap(&:start)
-        .attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
+      @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
+    rescue Docker::Error::TimeoutError
+      puts 'Failed to attached to stdout'
     end
 
     def commit
@@ -24,9 +24,8 @@ module Construi
     end
 
     def run
-      attach_stdout
-
       @container.start
+      attach_stdout
       status_code = @container.wait['StatusCode']
 
       raise RunError.new 'Cmd returned status code: #{status_code}' unless status_code == 0

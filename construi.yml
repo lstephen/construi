@@ -12,6 +12,10 @@ targets:
     - bundle install --path=vendor/bundle
     - bundle exec rake spec
 
+  install:
+    - bundle install --path=vendor/bundle
+    - bundle exec rake install
+
   release:
     - git config user.name lstephen
     - git config user.email levi.stephen@gmail.com
@@ -28,7 +32,8 @@ targets:
     - git checkout develop
     - git pull --rebase
     - bundle install --path vendor/bundle
-    - bundle exec gem bump --version minor --push
+    - bundle exec gem bump --version minor
+    - git push origin
 
   deploy:
     - git config user.name lstephen

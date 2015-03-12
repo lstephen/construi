@@ -31,7 +31,7 @@ module Construi
       commands = targets.map { |t| @config.target(t).commands }.flatten
 
       final_image = commands.reduce(IntermediateImage.seed(initial_image)) do |image, command|
-        puts "Running command: #{command}"
+        puts " > #{command}"
         image.run(command, @config.env)
       end
 
