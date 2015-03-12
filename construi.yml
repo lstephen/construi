@@ -5,10 +5,7 @@ environment:
   - COVERALLS_TOKEN
   - GIT_COMMIT
   - GIT_SSH_KEY
-<<<<<<< HEAD
-=======
   - RUBYGEMS_API_KEY
->>>>>>> master
 
 targets:
   build:
