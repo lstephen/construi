@@ -14,7 +14,7 @@ targets:
   release:
     - mkdir -p ~/.ssh
     - cp ${GIT_SSH_KEY} ~/.ssh/id_rsa
-    - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    - printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
     - git merge --no-ff --commit origin/master
     - git push origin ${GIT_COMMIT}:master
     - bundle install --path vendor/bundle
