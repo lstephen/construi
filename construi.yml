@@ -20,7 +20,7 @@ targets:
     - git config push.default simple
     - git checkout master
     - git pull --rebase
-    - git merge ${GIT_COMMIT}
+    - git merge --commit ${GIT_COMMIT}
     - git push origin
     - git checkout develop
     - git pull --rebase
