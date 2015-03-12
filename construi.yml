@@ -3,13 +3,39 @@ image: ruby:1.9
 environment:
   - CODECLIMATE_REPO_TOKEN
   - COVERALLS_TOKEN
+  - GIT_COMMIT
+  - GIT_SSH_KEY
+  - RUBYGEMS_API_KEY
 
 targets:
   build:
     - bundle install --path=vendor/bundle
     - bundle exec rake spec
 
-  install:
-    - bundle install --path=vendor/bundle
-    - bundle exec rake install
+  release:
+    - mkdir -p ~/.ssh
+    - cp ${GIT_SSH_KEY} ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa
+    - printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    - git config push.default simple
+    - git checkout master
+    - git pull --rebase
+    - git merge ${GIT_COMMIT}
+    - git push origin
+    - git checkout develop
+    - bundle install --path vendor/bundle
+    - bundle exec gem bump --version minor --push
+
+  deploy:
+    - mkdir -p ~/.ssh
+    - cp ${GIT_SSH_KEY} ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa
+    - printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    - git config push.default simple
+    - mkdir -p ~/.gem
+    - printf "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}" >> ~/.gem/credentials
+    - chmod 0600 ~/.gem/credentials
+    - bundle install --path vendor/bundle
+    - bundle exec gem release --tag
+
 
