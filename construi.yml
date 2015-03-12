@@ -14,6 +14,7 @@ targets:
   release:
     - mkdir -p ~/.ssh
     - cp ${GIT_SSH_KEY} ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa
     - printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
     - git merge --no-ff --commit origin/master
     - git push origin ${GIT_COMMIT}:master
