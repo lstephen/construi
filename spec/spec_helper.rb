@@ -4,6 +4,10 @@ require 'coveralls'
 
 Coveralls.wear!
 
+CodeClimate::TestReporter.configure do |config|
+  config.branch = ENV['CODECLIMATE_BRANCH']
+end
+
 CodeClimate::TestReporter.start
 
 RSpec.configure do |config|

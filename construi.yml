@@ -2,6 +2,7 @@ image: ruby:1.9
 
 environment:
   - CODECLIMATE_REPO_TOKEN
+  - CODECLIMATE_BRANCH
   - COVERALLS_TOKEN
   - GIT_COMMIT
   - GIT_SSH_KEY
