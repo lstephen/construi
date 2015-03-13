@@ -2,11 +2,10 @@
 require 'codeclimate-test-reporter'
 require 'coveralls'
 
-Coveralls.wear!
+# Monkey patch Coveralls to accept env variable for branch name
 
-CodeClimate::TestReporter.configure do |config|
-  config.branch = ENV['CODECLIMATE_BRANCH']
-end
+
+Coveralls.wear!
 
 CodeClimate::TestReporter.start
 

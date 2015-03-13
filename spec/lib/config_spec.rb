@@ -5,7 +5,7 @@ require 'construi/config'
 RSpec.describe Construi::Config do
 
   describe '#image' do
-    let (:config_content) do
+    let(:config_content) do
       <<-YAML
       image: #{image}
       YAML
