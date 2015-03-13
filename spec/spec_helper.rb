@@ -2,12 +2,15 @@
 require 'codeclimate-test-reporter'
 require 'coveralls'
 
-# Monkey patch Coveralls to accept env variable for branch name
+#CodeClimate::TestReporter.start
+#Coveralls.wear!
 
-
-Coveralls.wear!
-
-CodeClimate::TestReporter.start
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  Coveralls::SimpleCov::Formatter,
+  SimpleCov::Formatter::HTMLFormatter,
+  CodeClimate::TestReporter::Formatter
+]
+SimpleCov.start
 
 RSpec.configure do |config|
 
