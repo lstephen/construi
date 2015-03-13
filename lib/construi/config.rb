@@ -10,8 +10,12 @@ module Construi
       @yaml = yaml
     end
 
-    def self.load(path)
-      new(YAML.load_file(path))
+    def self.load(content)
+      new YAML.load(content)
+    end
+
+    def self.load_file(path)
+      new YAML.load_file(path)
     end
 
     def image

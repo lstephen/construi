@@ -40,7 +40,7 @@ module Construi
   end
 
   def self.run(targets)
-    Runner.new(Config.load('construi.yml')).run(targets)
+    Runner.new(Config.load_file('construi.yml')).run(targets)
   end
 
 end
