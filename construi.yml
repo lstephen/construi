@@ -1,6 +1,7 @@
 image: ruby:1.9
 
 environment:
+  - CI
   - CODECLIMATE_REPO_TOKEN
   - CODECLIMATE_BRANCH
   - COVERALLS_REPO_TOKEN
