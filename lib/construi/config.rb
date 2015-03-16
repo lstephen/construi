@@ -7,7 +7,7 @@ module Construi
     attr_reader :yaml
 
     def initialize(yaml)
-      @yaml = yaml
+      @yaml = yaml || {}
     end
 
     def self.load(content)
