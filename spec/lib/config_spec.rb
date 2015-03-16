@@ -26,7 +26,7 @@ RSpec.describe Construi::Config do
   describe '#env' do
     subject { config.env }
 
-    context 'when no environment' do
+    context 'when no environment section' do
       it { is_expected.to eq([]) }
     end
 
@@ -36,6 +36,23 @@ RSpec.describe Construi::Config do
         environment:
           - VAR1=VALUE_1
           - VAR2=VALUE_2
+        YAML
+      end
+
+      it { is_expected.to contain_exactly('VAR1=VALUE_1', 'VAR2=VALUE_2') }
+    end
+
+    context 'when passing through environment varaibles' do
+      before do
+        ENV['VAR1'] = 'VALUE_1'
+        ENV['VAR2'] = 'VALUE_2'
+      end
+
+      let(:config_content) do
+        <<-YAML
+        environment:
+          - VAR1
+          - VAR2
         YAML
       end
 
