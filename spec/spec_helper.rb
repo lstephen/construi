@@ -10,7 +10,10 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   CodeClimate::TestReporter::Formatter
 ]
-SimpleCov.start
+SimpleCov.start do
+  add_filter '/vendor/'
+  add_filter '/spec'
+end
 
 RSpec.configure do |config|
 
