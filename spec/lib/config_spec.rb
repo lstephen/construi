@@ -6,6 +6,29 @@ RSpec.describe Construi::Config do
   let(:config_content) { '' }
   let(:config) { Construi::Config.load(config_content) }
 
+  describe '.load_file' do
+    let(:config_file) { Tempfile.new('config.load_file') }
+    let(:config_content) do
+      <<-YAML
+      image: test-image
+      YAML
+    end
+
+    before do
+      config_file.write(config_content)
+      config_file.close
+    end
+
+    after do
+      config_file.unlink
+    end
+
+    subject { Construi::Config.load_file(config_file) }
+
+    it { is_expected.to_not be(nil) }
+    it { expect(subject.image).to eq('test-image') }
+  end
+
   describe '#image' do
     let(:config_content) do
       <<-YAML

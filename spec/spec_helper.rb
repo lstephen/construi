@@ -2,14 +2,12 @@
 require 'codeclimate-test-reporter'
 require 'coveralls'
 
-#CodeClimate::TestReporter.start
-#Coveralls.wear!
-
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   Coveralls::SimpleCov::Formatter,
   SimpleCov::Formatter::HTMLFormatter,
   CodeClimate::TestReporter::Formatter
 ]
+
 SimpleCov.start do
   add_filter '/vendor/'
   add_filter '/spec'
