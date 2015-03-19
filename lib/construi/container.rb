@@ -35,7 +35,7 @@ module Construi
 
     def self.create(image, cmd, env)
       wrap Docker::Container.create(
-        'Cmd' => ["sh", "-c", cmd],
+        'Cmd' => cmd.split,
         'Image' => image.id,
         'Env' => env.to_json,
         'Tty' => false,
