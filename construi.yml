@@ -19,8 +19,8 @@ targets:
     - bundle exec rake install
 
   release:
-    - construi/release/script.sh
+    - bash construi/release/script.sh
 
   deploy:
-    - construi/deploy/script.sh
+    - bash construi/deploy/script.sh
 

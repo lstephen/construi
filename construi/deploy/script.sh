@@ -1,3 +1,6 @@
+#!/bin/bash
+
+set -e
 
 git config user.name lstephen
 git config user.email levi.stephen@gmail.com
