@@ -83,5 +83,13 @@ RSpec.describe Construi::Config do
     end
   end
 
+  describe '#target' do
+    let(:target) { nil }
+    subject { config.target target }
+    context 'when no target name' do
+      it { is_expected.to be(nil) }
+    end
+  end
+
 end
 

@@ -37,6 +37,10 @@ module Construi
     end
 
     def target(target)
+      targets = @yaml['targets']
+
+      return nil if targets.nil?
+
       Target.new(@yaml['targets'][target])
     end
   end
