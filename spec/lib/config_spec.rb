@@ -84,10 +84,34 @@ RSpec.describe Construi::Config do
   end
 
   describe '#target' do
-    let(:target) { nil }
+    let(:target) { 'build' }
+
     subject { config.target target }
+
     context 'when no target name' do
+      let(:target) { nil }
       it { is_expected.to be(nil) }
+    end
+
+    context 'when no targets configured' do
+      it { is_expected.to be(nil) }
+    end
+
+    context 'when targets configured' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build:
+            - cmd1
+            - cmd2
+          release:
+            - cmd3
+            - cmd4
+        YAML
+      end
+
+      it { is_expected.to_not be(nil) }
+      it { expect(subject.commands).to eq(['cmd1', 'cmd2']) }
     end
   end
 
