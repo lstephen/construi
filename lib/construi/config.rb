@@ -7,7 +7,7 @@ module Construi
     attr_reader :yaml
 
     def initialize(yaml)
-      @yaml = yaml
+      @yaml = yaml || {}
     end
 
     def self.load(content)
@@ -37,6 +37,10 @@ module Construi
     end
 
     def target(target)
+      targets = @yaml['targets']
+
+      return nil if targets.nil?
+
       Target.new(@yaml['targets'][target])
     end
   end
