@@ -51,7 +51,7 @@ module Construi
     end
 
     def commands
-      @yaml
+      Array(@yaml)
     end
   end
 
