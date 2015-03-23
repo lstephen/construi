@@ -125,7 +125,33 @@ RSpec.describe Construi::Config do
       it { is_expected.to_not be(nil) }
       it { expect(subject.commands).to eq(['cmd1']) }
     end
-  end
+    context 'when using run command' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build:
+            run:
+              - cmd1
+              - cmd2
+        YAML
+      end
 
+      it { is_expected.to_not be(nil) }
+      it { expect(subject.commands).to eq(['cmd1', 'cmd2']) }
+    end
+
+    context 'when using single run command' do
+      let (:config_content) do
+        <<-YAML
+        targets:
+          build:
+            run: cmd1
+        YAML
+      end
+
+      it { is_expected.to_not be(nil) }
+      it { expect(subject.commands).to eq(['cmd1']) }
+    end
+  end
 end
 
