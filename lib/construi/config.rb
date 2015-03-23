@@ -51,7 +51,9 @@ module Construi
     end
 
     def commands
-      Array(@yaml)
+      cmds = @yaml.is_a?(Hash) ? @yaml['run'] : @yaml
+
+      Array(cmds)
     end
   end
 
