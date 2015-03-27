@@ -26,7 +26,25 @@ module Construi
     end
 
     def self.create(image)
-      wrap Docker::Image.create('fromImage' => image)
+      puts
+      puts "Creating image: '#{image}'...".green
+      wrap Docker::Image.create('fromImage' => image) { |s|
+        status = JSON.parse(s)
+
+        id = status['id']
+        progress = status['progressDetail']
+
+        print "#{id}: " unless id.nil?
+        puts "#{status['status']}" if progress.nil? or progress.empty?
+      }
+    end
+
+    def self.build(build)
+      puts
+      puts "Building image: '#{build}'...".green
+      wrap Docker::Image.build_from_dir(build, :rm => 0) { |s|
+        puts JSON.parse(s)['stream']
+      }
     end
 
     def self.wrap(image)
@@ -48,6 +66,7 @@ module Construi
 
     def initialize(image)
       @image = image
+      @first = true
     end
 
     def run(cmd, env)
@@ -59,7 +78,8 @@ module Construi
     end
 
     def update(image)
-      @image.delete unless @image.tagged?
+      @image.delete unless @first or @image.tagged?
+      @first = false
       @image = image
     end
 
