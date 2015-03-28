@@ -22,6 +22,10 @@ module Construi
       @yaml['image']
     end
 
+    def build
+      @yaml['build']
+    end
+
     def env
       return [] if @yaml['environment'].nil?
 
