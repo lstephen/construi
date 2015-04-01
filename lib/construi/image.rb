@@ -34,8 +34,10 @@ module Construi
         id = status['id']
         progress = status['progressDetail']
 
-        print "#{id}: " unless id.nil?
-        puts "#{status['status']}" if progress.nil? or progress.empty?
+        if progress.nil? or progress.empty?
+          print "#{id}: " unless id.nil?
+          puts "#{status['status']}" if progress.nil? or progress.empty?
+        end
       }
     end
 

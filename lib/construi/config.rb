@@ -45,17 +45,26 @@ module Construi
 
       return nil if targets.nil?
 
-      Target.new(@yaml['targets'][target])
+      Target.new(@yaml['targets'][target], self)
     end
   end
 
   class Target
-    def initialize(yaml)
+    def initialize(yaml, parent)
       @yaml = yaml
+      @parent = parent
     end
 
     def commands
       Array(@yaml.is_a?(Hash) ? @yaml['run'] : @yaml)
+    end
+
+    def image
+      (@yaml.is_a?(Hash) && @yaml['image']) || @parent.image
+    end
+
+    def build
+      (@yaml.is_a?(Hash) && @yaml['build']) || @parent.build
     end
   end
 
