@@ -32,7 +32,9 @@ module Construi
 
         commands = @config.target(t).commands
 
-        final_image = commands.reduce(IntermediateImage.seed(initial_image(@config.target(t)))) do |image, command|
+        initial_image = IntermediateImage.seed(initial_image(@config.target(t)))
+
+        final_image = commands.reduce(initial_image) do |image, command|
           puts
           puts " > #{command}".green
           image.run(command, @config.env)
