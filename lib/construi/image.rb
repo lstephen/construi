@@ -74,9 +74,10 @@ module Construi
     end
 
     def update(image)
-      @image.delete unless @first or @image.tagged?
+      delete unless @first
       @first = false
       @image = image
+      self
     end
 
     def delete
