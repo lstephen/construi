@@ -59,16 +59,28 @@ RSpec.describe Construi::Container do
   end
 
   describe '#run' do
-    before { allow(docker_container).to receive(:wait).and_return({'StatusCode' => 0}) }
+    before { allow(docker_container).to receive(:wait).and_return({'StatusCode' => status_code}) }
     before { allow(docker_container).to receive(:commit).and_return image }
 
-    subject! { container.run }
+    subject(:run) { -> { container.run } }
 
-    it { expect(docker_container).to have_received(:start) }
-    it { expect(docker_container).to have_received(:attach).with(:stream => true, :logs => true) }
-    it { expect(docker_container).to have_received(:wait) }
-    it { expect(docker_container).to have_received(:commit) }
-    it { is_expected.to eq(Construi::Image.wrap(image)) }
+    context 'when command succeeds' do
+      let(:status_code) { 0 }
+
+      subject! { run.call }
+
+      it { expect(docker_container).to have_received(:start) }
+      it { expect(docker_container).to have_received(:attach).with(:stream => true, :logs => true) }
+      it { expect(docker_container).to have_received(:wait) }
+      it { expect(docker_container).to have_received(:commit) }
+      it { is_expected.to eq(Construi::Image.wrap(image)) }
+    end
+
+    context 'when command fails' do
+      let(:status_code) { 1 }
+
+      it { expect { run.call }.to raise_error Construi::RunError,  /status code: 1/}
+    end
   end
 
   describe '.create' do
@@ -114,10 +126,7 @@ RSpec.describe Construi::Container do
     it { expect(docker_container).to have_received(:start) }
     it { expect(docker_container).to have_received(:commit) }
     it { expect(docker_container).to have_received(:delete) }
-
-
   end
-
 
 end
 
