@@ -32,7 +32,7 @@ module Construi
       attach_stdout
       status_code = @container.wait['StatusCode']
 
-      raise RunError.new 'Cmd returned status code: #{status_code}' unless status_code == 0
+      raise RunError.new "Cmd returned status code: #{status_code}" unless status_code == 0
 
       commit
     end
