@@ -1,6 +1,7 @@
 
 require 'codeclimate-test-reporter'
 require 'coveralls'
+require 'stringio'
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   Coveralls::SimpleCov::Formatter,
@@ -12,6 +13,8 @@ SimpleCov.start do
   add_filter '/vendor/'
   add_filter '/spec'
 end
+
+require 'construi'
 
 RSpec.configure do |config|
 
@@ -82,4 +85,11 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   Kernel.srand config.seed
+
+  config.before do
+    $stdout = StringIO.new
+  end
+  config.after(:all) do
+    $stdout = STDOUT
+  end
 end

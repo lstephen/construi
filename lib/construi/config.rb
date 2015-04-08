@@ -18,12 +18,16 @@ module Construi
       new YAML.load_file(path)
     end
 
+    def image_config
+      ImageConfig.load(@yaml)
+    end
+
     def image
-      @yaml['image']
+      image_config.image
     end
 
     def build
-      @yaml['build']
+      image_config.build
     end
 
     def env
@@ -59,12 +63,29 @@ module Construi
       Array(@yaml.is_a?(Hash) ? @yaml['run'] : @yaml)
     end
 
+    def image_config
+      ImageConfig.load(@yaml) || @parent.image_config
+    end
+
     def image
-      (@yaml.is_a?(Hash) && @yaml['image']) || @parent.image
+      image_config.image
     end
 
     def build
-      (@yaml.is_a?(Hash) && @yaml['build']) || @parent.build
+      image_config.build
+    end
+  end
+
+  ImageConfig = Struct.new(:image, :build) do
+    def self.load(yaml)
+      return nil unless yaml.is_a?(Hash)
+
+      image = yaml['image']
+      build = yaml['build']
+
+      return nil if image.nil? and build.nil?
+
+      new image, build
     end
   end
 

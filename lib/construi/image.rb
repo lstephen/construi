@@ -1,5 +1,8 @@
 require 'construi/container'
 
+require 'colorize'
+require 'docker'
+
 module Construi
 
   class Image
@@ -25,6 +28,10 @@ module Construi
       Container.run(self, cmd, env)
     end
 
+    def ==(other)
+      other.is_a? Image and id == other.id
+    end
+
     def self.create(image)
       puts
       puts "Creating image: '#{image}'...".green
@@ -36,7 +43,7 @@ module Construi
 
         if progress.nil? or progress.empty?
           print "#{id}: " unless id.nil?
-          puts "#{status['status']}" if progress.nil? or progress.empty?
+          puts "#{status['status']}"
         end
       }
     end
@@ -51,15 +58,6 @@ module Construi
 
     def self.wrap(image)
       new image
-    end
-
-    def self.use(image)
-      begin
-        i = create(image)
-        yield i
-      ensure
-        i.delete unless i.tagged?
-      end
     end
   end
 
@@ -80,9 +78,10 @@ module Construi
     end
 
     def update(image)
-      @image.delete unless @first or @image.tagged?
+      delete unless @first
       @first = false
       @image = image
+      self
     end
 
     def delete

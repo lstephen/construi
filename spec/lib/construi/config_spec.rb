@@ -1,5 +1,5 @@
-require 'spec_helper'
 
+require 'spec_helper'
 require 'construi/config'
 
 RSpec.describe Construi::Config do
@@ -42,6 +42,23 @@ RSpec.describe Construi::Config do
       context "when image is #{image_name}" do
         let(:image) { image_name }
         it { is_expected.to eq(image) }
+      end
+    end
+  end
+
+  describe '#build' do
+    let(:config_content) do
+      <<-YAML
+      build: #{build}
+      YAML
+    end
+
+    subject { config.build }
+
+    %w{ . construi/dev etc/docker/ }.each do |build|
+      context "when build is #{build}" do
+        let(:build) { build }
+        it { is_expected.to eq(build) }
       end
     end
   end
@@ -141,7 +158,7 @@ RSpec.describe Construi::Config do
     end
 
     context 'when using single run command' do
-      let (:config_content) do
+      let(:config_content) do
         <<-YAML
         targets:
           build:
@@ -152,6 +169,53 @@ RSpec.describe Construi::Config do
       it { is_expected.to_not be(nil) }
       it { expect(subject.commands).to eq(['cmd1']) }
     end
+
+    context 'when no image for target' do
+      let(:config_content) do
+        <<-YAML
+        image: global:image
+        targets:
+          build: cmd1
+          release:
+            image: release:image
+            run:
+              - cmd3
+              - cmd4
+        YAML
+      end
+
+      it { expect(subject.image).to eq('global:image') }
+    end
+
+    context 'when image for target' do
+      let(:config_content) do
+        <<-YAML
+        image: global:image
+        targets:
+          build:
+            image: build:image
+            run: cmd1
+        YAML
+      end
+
+      it { expect(subject.image).to eq('build:image') }
+    end
+
+    context 'when build for target and image for global' do
+      let(:config_content) do
+        <<-YAML
+        image: global:image
+        targets:
+          build:
+            build: build/build
+            run: cmd1
+        YAML
+      end
+
+      it { expect(subject.image).to be(nil) }
+      it { expect(subject.build).to eq('build/build') }
+    end
+
   end
 end
 

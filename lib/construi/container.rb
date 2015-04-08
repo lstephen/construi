@@ -9,6 +9,10 @@ module Construi
       @container = container
     end
 
+    def id
+      @container.id
+    end
+
     def delete
       @container.delete
     end
@@ -16,7 +20,7 @@ module Construi
     def attach_stdout
       @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
     rescue Docker::Error::TimeoutError
-      puts 'Failed to attached to stdout'
+      puts 'Failed to attach to stdout'.yellow
     end
 
     def commit
@@ -31,6 +35,10 @@ module Construi
       raise RunError.new 'Cmd returned status code: #{status_code}' unless status_code == 0
 
       commit
+    end
+
+    def ==(other)
+      other.is_a? Container and id == other.id
     end
 
     def self.create(image, cmd, env)
