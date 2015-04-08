@@ -45,35 +45,6 @@ RSpec.describe Construi::Runner do
     it { expect($stdout.string).to include(' > cmd1'.green) }
   end
 
-  describe '#initial_image' do
-    let(:build) { nil }
-    let(:image) { nil }
-    let(:target) { Struct.new(:build, :image).new build, image }
-
-    subject! { runner.initial_image(target) }
-
-    context 'when build' do
-      let(:build) { 'build/dir' }
-
-      it { is_expected.to be(image) }
-      it { expect(image_class).to have_received(:build).with(build) }
-      it { expect(image_class).to_not have_received(:create) }
-    end
-
-    context 'when image' do
-      let(:image) { 'image:latest' }
-
-      it { is_expected.to be(image) }
-      it { expect(image_class).to have_received(:create).with(image) }
-      it { expect(image_class).to_not have_received(:build) }
-    end
-
-    context 'when incorrectly configured' do
-      subject { -> { runner.initial_image(target) } }
-      it { expect { subject.call }.to raise_error(RuntimeError) }
-    end
-
-  end
 
 end
 

@@ -1,4 +1,6 @@
 
+require 'construi/target'
+
 module Construi
 
   class Config
@@ -22,14 +24,6 @@ module Construi
       ImageConfig.load(@yaml)
     end
 
-    def image
-      image_config.image
-    end
-
-    def build
-      image_config.build
-    end
-
     def env
       return [] if @yaml['environment'].nil?
 
@@ -49,30 +43,7 @@ module Construi
 
       return nil if targets.nil?
 
-      Target.new(@yaml['targets'][target], self)
-    end
-  end
-
-  class Target
-    def initialize(yaml, parent)
-      @yaml = yaml
-      @parent = parent
-    end
-
-    def commands
-      Array(@yaml.is_a?(Hash) ? @yaml['run'] : @yaml)
-    end
-
-    def image_config
-      ImageConfig.load(@yaml) || @parent.image_config
-    end
-
-    def image
-      image_config.image
-    end
-
-    def build
-      image_config.build
+      Target.new(target, @yaml['targets'][target], self)
     end
   end
 
