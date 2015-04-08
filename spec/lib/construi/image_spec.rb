@@ -1,19 +1,16 @@
 
 require 'spec_helper'
-require 'construi/image'
+
+require 'securerandom'
 
 RSpec.describe Construi::Image do
-  let(:docker_image) { instance_double(Docker::Image).as_null_object }
+  let(:id) {  SecureRandom.hex(16) }
+  let(:docker_image) { instance_double(Docker::Image, :id => id).as_null_object }
 
   subject(:image) { Construi::Image.wrap(docker_image) }
 
   describe '#id' do
-    let(:id) { 'test_id' }
-
-    before { allow(docker_image).to receive(:id).and_return id }
-
     subject { image.id }
-
     it { is_expected.to eq(id) }
   end
 
@@ -23,9 +20,7 @@ RSpec.describe Construi::Image do
   end
 
   describe '#tagged?' do
-    before do
-      allow(docker_image).to receive(:info).and_return({ 'RepoTags' => tag })
-    end
+    before { allow(docker_image).to receive(:info).and_return({ 'RepoTags' => tag }) }
 
     subject { image.tagged? }
 

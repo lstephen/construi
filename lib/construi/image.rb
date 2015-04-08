@@ -28,6 +28,10 @@ module Construi
       Container.run(self, cmd, env)
     end
 
+    def ==(other)
+      other.is_a? Image and id == other.id
+    end
+
     def self.create(image)
       puts
       puts "Creating image: '#{image}'...".green
