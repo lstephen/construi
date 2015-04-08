@@ -89,4 +89,22 @@ module Construi
     end
   end
 
+  class FileConfig
+    private_class_method :new
+
+    attr_reader :host, :container, :permissions
+
+    def initialize(host, container, permissions = nil)
+      @host = host
+      @container = container
+      @permissions = permissions unless permissions.nil? or permissions.strip.empty?
+    end
+
+    def self.parse(str)
+      split = str.split(':')
+
+      new split[0], split[1], split[2]
+    end
+  end
+
 end

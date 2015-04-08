@@ -219,3 +219,40 @@ RSpec.describe Construi::Config do
   end
 end
 
+RSpec.describe Construi::FileConfig do
+
+  describe '.parse' do
+    let(:host) { '/path/on/host' }
+    let(:container) { '/path/on/container' }
+    let(:permissions) { '0644' }
+
+    subject { Construi::FileConfig.parse(spec) }
+
+    context 'when no permissions' do
+      let(:spec) { "#{host}:#{container}" }
+
+      it { expect(subject.host).to eq(host) }
+      it { expect(subject.container).to eq(container) }
+      it { expect(subject.permissions).to be(nil) }
+    end
+
+    context 'emtpy permissions' do
+      let(:spec) { "#{host}:#{container}: " }
+
+      it { expect(subject.host).to eq(host) }
+      it { expect(subject.container).to eq(container) }
+      it { expect(subject.permissions).to be(nil) }
+    end
+
+    context 'with permissions' do
+      let(:spec) { "#{host}:#{container}:#{permissions}" }
+
+      it { expect(subject.host).to eq(host) }
+      it { expect(subject.container).to eq(container) }
+      it { expect(subject.permissions).to eq(permissions) }
+    end
+  end
+
+
+
+end
