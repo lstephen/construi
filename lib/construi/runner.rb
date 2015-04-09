@@ -1,6 +1,7 @@
 
 require 'construi/container'
 require 'construi/image'
+require 'construi/target'
 
 require 'construi/version'
 
@@ -27,29 +28,9 @@ module Construi
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
 
-      targets.each do |t|
-        puts "Running #{t}...".green
-
-        commands = @config.target(t).commands
-
-        initial_image = IntermediateImage.seed(initial_image(@config.target(t)))
-
-        final_image = commands.reduce(initial_image) do |image, command|
-          puts
-          puts " > #{command}".green
-          image.run(command, @config.env)
-        end
-
-        final_image.delete
-      end
+      targets.map {|t| Target.new t, @config.target(t) } .each(&:run)
     end
 
-    def initial_image(target)
-      return Image.create(target.image) unless target.image.nil?
-      return Image.build(target.build) unless target.build.nil?
-
-      raise "'build' or 'image' not set"
-    end
   end
 
 end

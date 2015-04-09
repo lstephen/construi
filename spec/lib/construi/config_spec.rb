@@ -3,8 +3,9 @@ require 'spec_helper'
 require 'construi/config'
 
 RSpec.describe Construi::Config do
-  let(:config_content) { '' }
-  let(:config) { Construi::Config.load(config_content) }
+  let(:config_content) { '{}' }
+
+  subject(:config) { Construi::Config.load(config_content) }
 
   describe '.load_file' do
     let(:config_file) { Tempfile.new('config.load_file') }
@@ -184,7 +185,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image).to eq('global:image') }
+      it { is_expected.to have_attributes(:image => 'global:image', :build => nil) }
     end
 
     context 'when image for target' do
@@ -198,7 +199,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image).to eq('build:image') }
+      it { is_expected.to have_attributes(:image => 'build:image', :build => nil) }
     end
 
     context 'when build for target and image for global' do
@@ -212,47 +213,63 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image).to be(nil) }
-      it { expect(subject.build).to eq('build/build') }
+      it { is_expected.to have_attributes(:image => nil, :build => 'build/build') }
     end
-
   end
-end
 
-RSpec.describe Construi::FileConfig do
-
-  describe '.parse' do
+  describe '#files' do
     let(:host) { '/path/on/host' }
     let(:container) { '/path/on/container' }
     let(:permissions) { '0644' }
 
-    subject { Construi::FileConfig.parse(spec) }
+    subject { config.target('build').files }
 
-    context 'when no permissions' do
-      let(:spec) { "#{host}:#{container}" }
+    context 'when global files' do
+      let(:config_content) do
+        <<-YAML
+        files:
+          - #{host}:#{container}
+          - #{host}:#{container}:#{permissions}
+        targets:
+          build: cmd1
+        YAML
+      end
 
-      it { expect(subject.host).to eq(host) }
-      it { expect(subject.container).to eq(container) }
-      it { expect(subject.permissions).to be(nil) }
+      it { expect(subject.length).to eq(2) }
+      it do
+        expect(subject[0])
+           .to have_attributes :host => host, :container => container, :permissions => nil
+      end
+      it do
+        expect(subject[1])
+          .to have_attributes :host => host, :container => container, :permissions => permissions
+      end
     end
 
-    context 'emtpy permissions' do
-      let(:spec) { "#{host}:#{container}: " }
+    context 'when target files' do
+      let(:config_content) do
+        <<-YAML
+        files:
+          - #{host}:#{container}
+        targets:
+          build:
+            run: cmd1
+            files:
+              - #{host}:#{container}:#{permissions}
+        YAML
+      end
 
-      it { expect(subject.host).to eq(host) }
-      it { expect(subject.container).to eq(container) }
-      it { expect(subject.permissions).to be(nil) }
+      it { expect(subject.length).to eq(2) }
+      it do
+        expect(subject[0])
+           .to have_attributes :host => host, :container => container, :permissions => nil
+      end
+      it do
+        expect(subject[1])
+          .to have_attributes :host => host, :container => container, :permissions => permissions
+      end
     end
 
-    context 'with permissions' do
-      let(:spec) { "#{host}:#{container}:#{permissions}" }
-
-      it { expect(subject.host).to eq(host) }
-      it { expect(subject.container).to eq(container) }
-      it { expect(subject.permissions).to eq(permissions) }
-    end
   end
-
-
-
 end
+
