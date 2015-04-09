@@ -1,14 +1,16 @@
 require 'spec_helper'
 
 RSpec.describe Construi::Target do
-  subject(:config) do
+  let(:parent_config) { Construi::Config.load('{}') }
+  let(:target_config) do
     cfg = {}
     cfg['image'] = image unless image.nil?
     cfg['build'] = build unless build.nil?
-    cfg
+
+    Construi::Config::Target.new(cfg, parent_config)
   end
 
-  subject(:target) { Construi::Target.new(nil, config, Construi::Config.load('{}')) }
+  subject(:target) { Construi::Target.new nil, target_config }
 
   describe '#initial_image' do
     let!(:image_class) { class_spy(Construi::Image).as_stubbed_const }

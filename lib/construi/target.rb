@@ -3,20 +3,19 @@
 module Construi
 
   class Target
-    attr_reader :name, :parent
+    attr_reader :name, :config
 
-    def initialize(name, yaml, parent)
+    def initialize(name, config)
       @name = name
-      @yaml = yaml
-      @parent = parent
+      @config = config
     end
 
     def commands
-      Array(@yaml.is_a?(Hash) ? @yaml['run'] : @yaml)
+      @config.commands
     end
 
     def image_config
-      Construi::Config::ImageConfig.load(@yaml) || @parent.image_config
+      @config.image_config
     end
 
     def run
@@ -25,7 +24,7 @@ module Construi
       final_image = commands.reduce(IntermediateImage.seed(initial_image)) do |image, command|
         puts
         puts " > #{command}".green
-        image.run(command, parent.env)
+        image.run(command, @config.env)
       end
 
       final_image.delete

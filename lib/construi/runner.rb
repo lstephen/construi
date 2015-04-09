@@ -1,6 +1,7 @@
 
 require 'construi/container'
 require 'construi/image'
+require 'construi/target'
 
 require 'construi/version'
 
@@ -27,7 +28,7 @@ module Construi
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
 
-      targets.map {|t| @config.target(t) } .each(&:run)
+      targets.map {|t| Target.new t, @config.target(t) } .each(&:run)
     end
 
   end

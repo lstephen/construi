@@ -1,4 +1,3 @@
-require 'construi/target'
 
 module Construi::Config
 
@@ -40,7 +39,7 @@ module Construi::Config
 
       return nil if targets.nil?
 
-      Construi::Target.new(target, yaml['targets'][target], self)
+      return Target.new yaml['targets'][target], self
     end
   end
 
@@ -52,6 +51,14 @@ module Construi::Config
     def initialize(yaml, parent)
       @yaml = yaml
       @parent = parent
+    end
+
+    def commands
+      Array(@yaml.is_a?(Hash) ? @yaml['run'] : @yaml)
+    end
+
+    def env
+      parent.env
     end
   end
 
