@@ -1,33 +1,30 @@
-
 require 'construi/target'
 
-module Construi
+module Construi::Config
 
-  class Config
-    private_class_method :new
+  module Environment
+    def parent
+      nil
+    end
+
+    def image_config
+      ImageConfig.load(yaml) || (parent.nil? ? nil : parent.image_config)
+    end
+  end
+
+  class Global
+    include Environment
 
     attr_reader :yaml
 
     def initialize(yaml)
-      @yaml = yaml || {}
-    end
-
-    def self.load(content)
-      new YAML.load(content)
-    end
-
-    def self.load_file(path)
-      new YAML.load_file(path)
-    end
-
-    def image_config
-      ImageConfig.load(@yaml)
+      @yaml = yaml
     end
 
     def env
-      return [] if @yaml['environment'].nil?
+      return [] if yaml['environment'].nil?
 
-      @yaml['environment'].reduce([]) do |acc, e|
+      yaml['environment'].reduce([]) do |acc, e|
         key = e.partition('=').first
         value = e.partition('=').last
 
@@ -39,11 +36,22 @@ module Construi
     end
 
     def target(target)
-      targets = @yaml['targets']
+      targets = yaml['targets']
 
       return nil if targets.nil?
 
-      Target.new(target, @yaml['targets'][target], self)
+      Construi::Target.new(target, yaml['targets'][target], self)
+    end
+  end
+
+  class Target
+    include Environment
+
+    attr_reader :yaml, :parent
+
+    def initialize(yaml, parent)
+      @yaml = yaml
+      @parent = parent
     end
   end
 
@@ -60,4 +68,12 @@ module Construi
     end
   end
 
+  def self.load(content)
+    Global.new YAML.load(content)
+  end
+
+  def self.load_file(path)
+    Global.new YAML.load_file(path)
+  end
 end
+

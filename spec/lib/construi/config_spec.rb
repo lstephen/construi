@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'construi/config'
 
 RSpec.describe Construi::Config do
-  let(:config_content) { '' }
+  let(:config_content) { '{}' }
   let(:config) { Construi::Config.load(config_content) }
 
   describe '.load_file' do

@@ -16,7 +16,7 @@ module Construi
     end
 
     def image_config
-      ImageConfig.load(@yaml) || @parent.image_config
+      Construi::Config::ImageConfig.load(@yaml) || @parent.image_config
     end
 
     def run
