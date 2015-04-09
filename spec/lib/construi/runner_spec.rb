@@ -7,9 +7,7 @@ RSpec.describe Construi::Runner do
   let(:image) { instance_double(Construi::Image).as_null_object }
   let!(:image_class) { class_spy(Construi::Image).as_stubbed_const }
 
-  [:build, :create].each do |m|
-    before { allow(image_class).to receive(m).and_return image }
-  end
+  before { allow(image_class).to receive(:from).and_return image }
 
   subject(:runner) { Construi::Runner.new(config) }
 

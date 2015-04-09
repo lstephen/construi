@@ -32,6 +32,12 @@ module Construi
       other.is_a? Image and id == other.id
     end
 
+    def self.from(config)
+      return create(config.image) unless config.image.nil?
+      return build(config.build) unless config.build.nil?
+      raise Error, "Invalid image configuration: #{config}"
+    end
+
     def self.create(image)
       puts
       puts "Creating image: '#{image}'...".green
@@ -58,6 +64,9 @@ module Construi
 
     def self.wrap(image)
       new image
+    end
+
+    class Error < StandardError
     end
   end
 

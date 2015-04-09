@@ -27,9 +27,7 @@ module Construi
     end
 
     def initial_image
-      return Image.create(@config.image) unless @config.image.nil?
-      return Image.build(@config.build) unless @config.build.nil?
-      raise 'No image configured'
+      return Image.from(@config)
     end
   end
 
