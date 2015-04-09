@@ -14,10 +14,6 @@ module Construi
       @config.commands
     end
 
-    def image_config
-      @config.image_config
-    end
-
     def run
       puts "Running #{name}...".green
 
@@ -31,10 +27,9 @@ module Construi
     end
 
     def initial_image
-      raise 'No image configured' if image_config.nil?
-
-      return Image.create(image_config.image) unless image_config.image.nil?
-      return Image.build(image_config.build) unless image_config.build.nil?
+      return Image.create(@config.image) unless @config.image.nil?
+      return Image.build(@config.build) unless @config.build.nil?
+      raise 'No image configured'
     end
   end
 

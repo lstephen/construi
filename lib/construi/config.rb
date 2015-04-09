@@ -1,13 +1,29 @@
 
 module Construi::Config
 
+  module Image
+    def image
+      return with_parent(&:image) unless yaml.is_a? Hash
+
+      yaml['image'] || with_parent(&:image) unless yaml.has_key? 'build'
+    end
+
+    def build
+      return with_parent(&:build) unless yaml.is_a? Hash
+
+      yaml['build'] || with_parent(&:build) unless yaml.has_key? 'image'
+    end
+  end
+
   module Environment
+    include Image
+
     def parent
       nil
     end
 
-    def image_config
-      ImageConfig.load(yaml) || (parent.nil? ? nil : parent.image_config)
+    def with_parent
+      parent ? yield(parent) : nil
     end
   end
 
@@ -59,19 +75,6 @@ module Construi::Config
 
     def env
       parent.env
-    end
-  end
-
-  ImageConfig = Struct.new(:image, :build) do
-    def self.load(yaml)
-      return nil unless yaml.is_a?(Hash)
-
-      image = yaml['image']
-      build = yaml['build']
-
-      return nil if image.nil? and build.nil?
-
-      new image, build
     end
   end
 
