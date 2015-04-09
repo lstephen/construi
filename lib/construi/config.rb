@@ -3,15 +3,19 @@ module Construi::Config
 
   module Image
     def image
-      return with_parent(&:image) unless yaml.is_a? Hash
-
-      yaml['image'] || with_parent(&:image) unless yaml.has_key? 'build'
+      configured :image
     end
 
     def build
-      return with_parent(&:build) unless yaml.is_a? Hash
+      configured :build
+    end
 
-      yaml['build'] || with_parent(&:build) unless yaml.has_key? 'image'
+    def configured?
+      yaml.is_a?(Hash) && (yaml.has_key?('build') || yaml.has_key?('image'))
+    end
+
+    def configured(what)
+      configured? ? yaml[what.to_s] : with_parent(&what)
     end
   end
 
