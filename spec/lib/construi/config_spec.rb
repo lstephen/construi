@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'construi/config'
 
 RSpec.describe Construi::Config do
-  let(:config_content) { '' }
+  let(:config_content) { '{}' }
   let(:config) { Construi::Config.load(config_content) }
 
   describe '.load_file' do
@@ -26,7 +26,7 @@ RSpec.describe Construi::Config do
     subject { Construi::Config.load_file(config_file) }
 
     it { is_expected.to_not be(nil) }
-    it { expect(subject.image_config.image).to eq('test-image') }
+    it { expect(subject.image).to eq('test-image') }
   end
 
   describe '#image_config' do
@@ -38,7 +38,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      subject { config.image_config.image }
+      subject { config.image }
 
       %w{ test-image:latest lstephen/construi:latest }.each do |image_name|
         context "when image is #{image_name}" do
@@ -55,7 +55,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      subject { config.image_config.build }
+      subject { config.build }
 
       %w{ . construi/dev etc/docker/ }.each do |build|
         context "when build is #{build}" do
@@ -187,7 +187,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image_config.image).to eq('global:image') }
+      it { expect(subject.image).to eq('global:image') }
     end
 
     context 'when image for target' do
@@ -201,7 +201,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image_config.image).to eq('build:image') }
+      it { expect(subject.image).to eq('build:image') }
     end
 
     context 'when build for target and image for global' do
@@ -215,8 +215,8 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image_config.image).to be(nil) }
-      it { expect(subject.image_config.build).to eq('build/build') }
+      it { expect(subject.image).to be(nil) }
+      it { expect(subject.build).to eq('build/build') }
     end
 
   end

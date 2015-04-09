@@ -6,6 +6,7 @@ require 'securerandom'
 RSpec.describe Construi::Image do
   let(:id) {  SecureRandom.hex(16) }
   let(:docker_image) { instance_double(Docker::Image, :id => id).as_null_object }
+  let!(:docker_image_class) { class_spy(Docker::Image).as_stubbed_const }
 
   subject(:image) { Construi::Image.wrap(docker_image) }
 
@@ -45,9 +46,42 @@ RSpec.describe Construi::Image do
     it { expect(container).to have_received(:run).with(image, cmd, env) }
   end
 
+  describe '.from' do
+    Config = Struct.new :image, :build
+
+    let(:image) { nil }
+    let(:build) { nil }
+    let(:config) { Config.new image, build }
+
+    [:create, :build_from_dir].each do |m|
+      before { allow(docker_image_class).to receive(m).and_return docker_image }
+    end
+
+    subject(:from) { -> { Construi::Image.from(config) } }
+
+    context 'when build' do
+      let(:build) { 'build/dir' }
+
+      subject! { from.call }
+
+      it { expect(docker_image_class).to have_received(:build_from_dir) }
+    end
+
+    context 'when image' do
+      let(:image) { 'image:latest' }
+
+      subject! { from.call }
+
+      it { expect(docker_image_class).to have_received(:create) }
+    end
+
+    context 'when invalid' do
+      it { expect { from.call }.to raise_error(Construi::Image::Error, /Invalid image configuration/) }
+    end
+  end
+
   describe '.build' do
     let(:build_dir) { 'etc/docker' }
-    let!(:docker_image_class) { class_double(Docker::Image).as_stubbed_const }
 
     before do
       allow(docker_image_class)
@@ -79,7 +113,6 @@ RSpec.describe Construi::Image do
 
   describe '.create' do
     let(:image_tag) { 'tagged:latest' }
-    let!(:docker_image_class) { class_double(Docker::Image).as_stubbed_const }
 
     before do
       allow(docker_image_class)
