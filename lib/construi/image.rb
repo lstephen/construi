@@ -38,12 +38,7 @@ module Construi
           .insert_local 'localPath' => file.host, 'outputPath' => file.container
       end
 
-      if file.permissions
-        chmod = "chmod -R #{file.permissions} #{file.container}"
-
-        puts " > #{chmod}"
-        img = img.run chmod
-      end
+      img.map { |i| i.chmod file.container, file.permissions } if file.permissions
 
       img.run "ls -l #{file.container}"
 
@@ -52,6 +47,13 @@ module Construi
 
     def insert_locals(files)
       IntermediateImage.seed(self).reduce(files) { |i, f| i.insert_local f }.image
+    end
+
+    def chmod(file, permissions)
+        chmod = "chmod -R #{permissions} #{file}"
+
+        puts " > #{chmod}"
+        run chmod
     end
 
     def run(cmd, env = [])
