@@ -17,7 +17,7 @@ module Construi
     def run
       puts "Running #{name}...".green
 
-      final_image = commands.reduce(IntermediateImage.seed(initial_image)) do |image, command|
+      final_image = IntermediateImage.seed(initial_image).reduce(commands) do |image, command|
         puts
         puts " > #{command}".green
         image.run(command, @config.env)

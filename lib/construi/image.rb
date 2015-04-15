@@ -62,14 +62,12 @@ module Construi
 
       raise Error, "Invalid image configuration: #{config}" unless image
 
-      image = config.files.reduce(IntermediateImage.seed(image)) do |acc, el|
-        acc.map do |i|
-          puts "\nCopying #{el.host} to #{el.container}...".green
-          i.insert_local el.host, el.container, el.permissions
-        end
-      end.image
+      image = IntermediateImage.seed(image).reduce(config.files) do |i, file|
+        puts "\nCopying #{file.host} to #{file.container}...".green
+        i.insert_local file.host, file.container, file.permissions
+      end
 
-      image
+      image.image
     end
 
     def self.create(image)
@@ -120,6 +118,12 @@ module Construi
 
     def map
       update(yield @image)
+    end
+
+    def reduce(iter)
+      iter.reduce(self) do |intermediate_image, item|
+        intermediate_image.map { |image| yield image, item }
+      end
     end
 
     def update(image)

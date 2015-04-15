@@ -3,19 +3,19 @@ module Construi::Config
 
   module Image
     def image
-      configured :image
+      image_configured :image
     end
 
     def build
-      configured :build
+      image_configured :build
     end
 
-    def configured?
+    def image_configured?
       yaml.is_a?(Hash) && (yaml.has_key?('build') || yaml.has_key?('image'))
     end
 
-    def configured(what)
-      configured? ? yaml[what.to_s] : with_parent(&what)
+    def image_configured(what)
+      image_configured? ? yaml[what.to_s] : with_parent(&what)
     end
   end
 
@@ -33,15 +33,21 @@ module Construi::Config
       def host
         @host.gsub(/\$(\w+)/) { ENV[$1] }
       end
-    end
 
-    def files
-      return with_parent([], &:files) unless yaml.is_a? Hash and yaml.has_key? 'files'
-
-      fs = yaml['files'].map do |str|
+      def self.parse(str)
         split = str.split(':')
         File.new split[0], split[1], split[2]
       end
+    end
+
+    def files_configured?
+      yaml.is_a? Hash and yaml.has_key? 'files'
+    end
+
+    def files
+      return with_parent([], &:files) unless files_configured?
+
+      fs = yaml['files'].map { |str| File.parse(str) }
 
       Array(with_parent(&:files)).concat fs
     end
