@@ -3,27 +3,66 @@ module Construi::Config
 
   module Image
     def image
-      return with_parent(&:image) unless yaml.is_a? Hash
-
-      yaml['image'] || with_parent(&:image) unless yaml.has_key? 'build'
+      image_configured :image
     end
 
     def build
-      return with_parent(&:build) unless yaml.is_a? Hash
+      image_configured :build
+    end
 
-      yaml['build'] || with_parent(&:build) unless yaml.has_key? 'image'
+    def image_configured?
+      yaml.is_a?(Hash) && (yaml.has_key?('build') || yaml.has_key?('image'))
+    end
+
+    def image_configured(what)
+      image_configured? ? yaml[what.to_s] : with_parent(&what)
+    end
+  end
+
+  module Files
+
+    class File
+      attr_reader :container, :permissions
+
+      def initialize(host, container, permissions)
+        @host = host
+        @container = container
+        @permissions = permissions
+      end
+
+      def host
+        @host.gsub(/\$(\w+)/) { ENV[$1] }
+      end
+
+      def self.parse(str)
+        split = str.split(':')
+        File.new split[0], split[1], split[2]
+      end
+    end
+
+    def files_configured?
+      yaml.is_a? Hash and yaml.has_key? 'files'
+    end
+
+    def files
+      return with_parent([], &:files) unless files_configured?
+
+      fs = yaml['files'].map { |str| File.parse(str) }
+
+      Array(with_parent(&:files)).concat fs
     end
   end
 
   module Environment
     include Image
+    include Files
 
     def parent
       nil
     end
 
-    def with_parent
-      parent ? yield(parent) : nil
+    def with_parent(or_else = nil)
+      parent ? yield(parent) : or_else
     end
   end
 

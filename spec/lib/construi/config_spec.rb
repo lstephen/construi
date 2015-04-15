@@ -4,7 +4,8 @@ require 'construi/config'
 
 RSpec.describe Construi::Config do
   let(:config_content) { '{}' }
-  let(:config) { Construi::Config.load(config_content) }
+
+  subject(:config) { Construi::Config.load(config_content) }
 
   describe '.load_file' do
     let(:config_file) { Tempfile.new('config.load_file') }
@@ -29,39 +30,36 @@ RSpec.describe Construi::Config do
     it { expect(subject.image).to eq('test-image') }
   end
 
-  describe '#image_config' do
-
-    context 'when image given' do
-      let(:config_content) do
-        <<-YAML
-        image: #{image}
-        YAML
-      end
-
-      subject { config.image }
-
-      %w{ test-image:latest lstephen/construi:latest }.each do |image_name|
-        context "when image is #{image_name}" do
-          let(:image) { image_name }
-          it { is_expected.to eq(image) }
-        end
-      end
+  describe '#image' do
+    let(:config_content) do
+      <<-YAML
+      image: #{image}
+      YAML
     end
 
-    context 'when build given' do
-      let(:config_content) do
-        <<-YAML
-        build: #{build}
-        YAML
+    subject { config.image }
+
+    %w{ test-image:latest lstephen/construi:latest }.each do |image_name|
+      context "when image is #{image_name}" do
+        let(:image) { image_name }
+        it { is_expected.to eq(image) }
       end
+    end
+  end
 
-      subject { config.build }
+  describe '#build' do
+    let(:config_content) do
+      <<-YAML
+      build: #{build}
+      YAML
+    end
 
-      %w{ . construi/dev etc/docker/ }.each do |build|
-        context "when build is #{build}" do
-          let(:build) { build }
-          it { is_expected.to eq(build) }
-        end
+    subject { config.build }
+
+    %w{ . construi/dev etc/docker/ }.each do |build|
+      context "when build is #{build}" do
+        let(:build) { build }
+        it { is_expected.to eq(build) }
       end
     end
   end
@@ -187,7 +185,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image).to eq('global:image') }
+      it { is_expected.to have_attributes(:image => 'global:image', :build => nil) }
     end
 
     context 'when image for target' do
@@ -201,7 +199,7 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image).to eq('build:image') }
+      it { is_expected.to have_attributes(:image => 'build:image', :build => nil) }
     end
 
     context 'when build for target and image for global' do
@@ -215,8 +213,73 @@ RSpec.describe Construi::Config do
         YAML
       end
 
-      it { expect(subject.image).to be(nil) }
-      it { expect(subject.build).to eq('build/build') }
+      it { is_expected.to have_attributes(:image => nil, :build => 'build/build') }
+    end
+  end
+
+  describe '#files' do
+    let(:host) { '/path/on/host' }
+    let(:container) { '/path/on/container' }
+    let(:permissions) { '0644' }
+
+    subject { config.target('build').files }
+
+    context 'when no files' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build: cmd1
+        YAML
+      end
+
+      it { is_expected.to_not be(nil) }
+      it { is_expected.to eq([]) }
+    end
+
+    context 'when global files' do
+      let(:config_content) do
+        <<-YAML
+        files:
+          - #{host}:#{container}
+          - #{host}:#{container}:#{permissions}
+        targets:
+          build: cmd1
+        YAML
+      end
+
+      it { expect(subject.length).to eq(2) }
+      it do
+        expect(subject[0])
+           .to have_attributes :host => host, :container => container, :permissions => nil
+      end
+      it do
+        expect(subject[1])
+          .to have_attributes :host => host, :container => container, :permissions => permissions
+      end
+    end
+
+    context 'when target files' do
+      let(:config_content) do
+        <<-YAML
+        files:
+          - #{host}:#{container}
+        targets:
+          build:
+            run: cmd1
+            files:
+              - #{host}:#{container}:#{permissions}
+        YAML
+      end
+
+      it { expect(subject.length).to eq(2) }
+      it do
+        expect(subject[0])
+           .to have_attributes :host => host, :container => container, :permissions => nil
+      end
+      it do
+        expect(subject[1])
+          .to have_attributes :host => host, :container => container, :permissions => permissions
+      end
     end
 
   end

@@ -7,6 +7,7 @@ RSpec.describe Construi::Image do
   let(:id) {  SecureRandom.hex(16) }
   let(:docker_image) { instance_double(Docker::Image, :id => id).as_null_object }
   let!(:docker_image_class) { class_spy(Docker::Image).as_stubbed_const }
+  let!(:container_class) { class_spy(Construi::Container).as_stubbed_const }
 
   subject(:image) { Construi::Image.wrap(docker_image) }
 
@@ -46,12 +47,55 @@ RSpec.describe Construi::Image do
     it { expect(container).to have_received(:run).with(image, cmd, env) }
   end
 
+  describe '#insert_local' do
+    let(:host) { '/path/host' }
+    let(:container) { '/path/on/container' }
+    let(:permissions) { nil }
+    let(:file) { Construi::Config::Files::File.new host, container, permissions }
+
+    before { allow(docker_image).to receive(:info).and_return({ 'RepoTags' => '<none>:<none>' }) }
+    before { allow(docker_image).to receive(:insert_local).and_return(docker_image) }
+    before { allow(container_class).to receive(:run).and_return image }
+
+    subject! { image.insert_local file }
+
+    context 'no permissions' do
+      it { expect(subject.id).to eq(id) }
+      it do
+        expect(docker_image)
+          .to have_received(:insert_local)
+          .with 'localPath' => host, 'outputPath' => container
+      end
+      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", []) }
+    end
+
+    context 'with permissions' do
+      let(:permissions) { '0600' }
+
+      it { expect(subject.id).to eq(id) }
+      it do
+        expect(docker_image)
+          .to have_received(:insert_local)
+          .with 'localPath' => host, 'outputPath' => container
+      end
+      it do
+        expect(container_class)
+          .to have_received(:run)
+          .with(image, "chmod -R #{permissions} #{container}", [])
+      end
+      it { expect($stdout.string).to include(" > chmod -R #{permissions} #{container}") }
+      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", []) }
+    end
+
+  end
+
   describe '.from' do
-    Config = Struct.new :image, :build
+    Config = Struct.new :image, :build, :files
 
     let(:image) { nil }
     let(:build) { nil }
-    let(:config) { Config.new image, build }
+    let(:files) { [] }
+    let(:config) { Config.new image, build, files }
 
     [:create, :build_from_dir].each do |m|
       before { allow(docker_image_class).to receive(m).and_return docker_image }
@@ -77,6 +121,27 @@ RSpec.describe Construi::Image do
 
     context 'when invalid' do
       it { expect { from.call }.to raise_error(Construi::Image::Error, /Invalid image configuration/) }
+    end
+
+    context 'when files' do
+      let(:image) { 'image:latest' }
+      before { allow(docker_image).to receive(:info).and_return({ 'RepoTags' => image }) }
+
+      let(:host) { '/path/host' }
+      let(:container) { '/path/on/container' }
+      let(:permissions) { nil }
+
+      let(:files) { [ Construi::Config::Files::File.new(host, container, permissions) ] }
+
+      subject! { from.call }
+
+      it { expect(docker_image_class).to have_received(:create) }
+      it do
+        expect(docker_image)
+          .to have_received(:insert_local)
+          .with 'localPath' => host, 'outputPath' => container
+      end
+      it { expect($stdout.string).to include("\nCopying #{host} to #{container}...".green) }
     end
   end
 
