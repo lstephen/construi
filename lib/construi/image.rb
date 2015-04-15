@@ -28,24 +28,30 @@ module Construi
       @image.info['RepoTags'] != '<none>:<none>'
     end
 
-    def insert_local(host, container, permissions)
+    def insert_local(file)
+      puts "\nCopying #{file.host} to #{file.container}...".green
+
       img = IntermediateImage.seed(self)
 
       img.map do |i|
         Image.wrap i.docker_image
-          .insert_local 'localPath' => host, 'outputPath' => container
+          .insert_local 'localPath' => file.host, 'outputPath' => file.container
       end
 
-      unless permissions.nil?
-        chmod = "chmod -R #{permissions} #{container}"
+      if file.permissions
+        chmod = "chmod -R #{file.permissions} #{file.container}"
 
         puts " > #{chmod}"
         img = img.run chmod
       end
 
-      img.run "ls -l #{container}"
+      img.run "ls -l #{file.container}"
 
       img.image
+    end
+
+    def insert_locals(files)
+      IntermediateImage.seed(self).reduce(files) { |i, f| i.insert_local f }.image
     end
 
     def run(cmd, env = [])
@@ -62,12 +68,7 @@ module Construi
 
       raise Error, "Invalid image configuration: #{config}" unless image
 
-      image = IntermediateImage.seed(image).reduce(config.files) do |i, file|
-        puts "\nCopying #{file.host} to #{file.container}...".green
-        i.insert_local file.host, file.container, file.permissions
-      end
-
-      image.image
+      image.insert_locals config.files
     end
 
     def self.create(image)
@@ -122,7 +123,7 @@ module Construi
 
     def reduce(iter)
       iter.reduce(self) do |intermediate_image, item|
-        intermediate_image.map { |image| yield image, item }
+        intermediate_image.map { |i| yield i, item }
       end
     end
 

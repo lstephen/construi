@@ -51,12 +51,13 @@ RSpec.describe Construi::Image do
     let(:host) { '/path/host' }
     let(:container) { '/path/on/container' }
     let(:permissions) { nil }
+    let(:file) { Construi::Config::Files::File.new host, container, permissions }
 
     before { allow(docker_image).to receive(:info).and_return({ 'RepoTags' => '<none>:<none>' }) }
     before { allow(docker_image).to receive(:insert_local).and_return(docker_image) }
     before { allow(container_class).to receive(:run).and_return image }
 
-    subject! { image.insert_local(host, container, permissions) }
+    subject! { image.insert_local file }
 
     context 'no permissions' do
       it { expect(subject.id).to eq(id) }
