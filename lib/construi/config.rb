@@ -45,11 +45,9 @@ module Construi::Config
     end
 
     def files
-      return with_parent([], &:files) unless files_configured?
+      fs = files_configured? ? yaml['files'].map { |str| File.parse(str) } : []
 
-      fs = yaml['files'].map { |str| File.parse(str) }
-
-      Array(with_parent(&:files)).concat fs
+      with_parent([], &:files).concat fs
     end
   end
 
