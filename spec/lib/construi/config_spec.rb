@@ -224,6 +224,18 @@ RSpec.describe Construi::Config do
 
     subject { config.target('build').files }
 
+    context 'when no files' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build: cmd1
+        YAML
+      end
+
+      it { is_expected.to_not be(nil) }
+      it { is_expected.to eq([]) }
+    end
+
     context 'when global files' do
       let(:config_content) do
         <<-YAML

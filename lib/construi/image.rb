@@ -20,11 +20,35 @@ module Construi
       @image.delete
     end
 
+    def docker_image
+      @image
+    end
+
     def tagged?
       @image.info['RepoTags'] != '<none>:<none>'
     end
 
-    def run(cmd, env)
+    def insert_local(host, container, permissions)
+      img = IntermediateImage.seed(self)
+
+      img.map do |i|
+        Image.wrap i.docker_image
+          .insert_local 'localPath' => host, 'outputPath' => container
+      end
+
+      unless permissions.nil?
+        chmod = "chmod -R #{permissions} #{container}"
+
+        puts " > #{chmod}"
+        img = img.run chmod
+      end
+
+      img.run "ls -l #{container}"
+
+      img.image
+    end
+
+    def run(cmd, env = [])
       Container.run(self, cmd, env)
     end
 
@@ -33,9 +57,19 @@ module Construi
     end
 
     def self.from(config)
-      return create(config.image) unless config.image.nil?
-      return build(config.build) unless config.build.nil?
-      raise Error, "Invalid image configuration: #{config}"
+      image = create(config.image) unless config.image.nil?
+      image = build(config.build) unless config.build.nil?
+
+      raise Error, "Invalid image configuration: #{config}" unless image
+
+      image = config.files.reduce(IntermediateImage.seed(image)) do |acc, el|
+        acc.map do |i|
+          puts "\nCopying #{el.host} to #{el.container}...".green
+          i.insert_local el.host, el.container, el.permissions
+        end
+      end.image
+
+      image
     end
 
     def self.create(image)
@@ -73,12 +107,14 @@ module Construi
   class IntermediateImage
     private_class_method :new
 
+    attr_reader :image
+
     def initialize(image)
       @image = image
       @first = true
     end
 
-    def run(cmd, env)
+    def run(cmd, env = [])
       map { |i| i.run(cmd, env) }
     end
 

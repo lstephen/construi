@@ -20,10 +20,23 @@ module Construi::Config
   end
 
   module Files
-    File = Struct.new :host, :container, :permissions
+
+    class File
+      attr_reader :container, :permissions
+
+      def initialize(host, container, permissions)
+        @host = host
+        @container = container
+        @permissions = permissions
+      end
+
+      def host
+        @host.gsub(/\$(\w+)/) { ENV[$1] }
+      end
+    end
 
     def files
-      return with_parent(&:files) unless yaml.is_a? Hash and yaml.has_key? 'files'
+      return with_parent([], &:files) unless yaml.is_a? Hash and yaml.has_key? 'files'
 
       fs = yaml['files'].map do |str|
         split = str.split(':')
@@ -42,8 +55,8 @@ module Construi::Config
       nil
     end
 
-    def with_parent
-      parent ? yield(parent) : nil
+    def with_parent(or_else = nil)
+      parent ? yield(parent) : or_else
     end
   end
 
