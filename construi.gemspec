@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["levi.stephen@gmail.com"]
   spec.summary       = %q{Build tool using Docker to specify build environment}
   spec.description   = %q{Build tool using Docker to specify build environment}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/lstephen/construi"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
