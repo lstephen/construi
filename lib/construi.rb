@@ -1,9 +1,10 @@
-require 'construi/config'
-require 'construi/runner'
 
 require 'yaml'
 
 module Construi
+  require 'construi/config'
+  require 'construi/runner'
+
   String.disable_colorization = false
 
   def self.run(targets)
