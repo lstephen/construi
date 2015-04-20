@@ -11,7 +11,7 @@ mkdir -p ~/.gem
 printf -- "---\\n:rubygems_api_key: ${RUBYGEMS_API_KEY}" >> ~/.gem/credentials
 chmod 0600 ~/.gem/credentials
 
-git branch --set-upstream $GIT_BRANCH origin/master
+git branch -u $GIT_BRANCH
 
 bundle install --path vendor/bundle
 bundle exec gem release --tag
