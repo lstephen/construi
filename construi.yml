@@ -20,8 +20,12 @@ targets:
     - bundle exec rake install
 
   release:
-    - bash construi/release/script.sh
+    files:
+      - $GIT_SSH_KEY:/root/.ssh/id_rsa:0600
+    run: bash construi/release/script.sh
 
   deploy:
-    - bash construi/deploy/script.sh
+    files:
+      - $GIT_SSH_KEY:/root/.ssh/id_rsa:0600
+    run: bash construi/deploy/script.sh
 
