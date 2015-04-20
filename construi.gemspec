@@ -21,10 +21,10 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '~> 1.9'
 
   spec.add_dependency 'docker-api', '~> 1.20'
-  spec.add_dependency 'colorize', '~> 0.7.5'
+  spec.add_dependency 'colorize', '~> 0.7'
 
   spec.add_development_dependency 'bundler', '~> 1.7'
-  spec.add_development_dependency 'codeclimate-test-reporter'
+  spec.add_development_dependency 'codeclimate-test-reporter', '~> 0.4'
   spec.add_development_dependency 'coveralls', '~> 0.7'
   spec.add_development_dependency 'gem-release', '~> 0.7'
   spec.add_development_dependency 'rake', '~> 10.0'
