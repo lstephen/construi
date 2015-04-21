@@ -2,8 +2,11 @@
 
 set -e
 
-[[ -n $GIT_AUTHOR_NAME ]] && git config user.name $GIT_AUTHOR_NAME
-[[ -n $GIT_AUTHOR_EMAIL ]] && git config user.email $GIT_AUTHOR_EMAIL
+echo "name: $GIT_AUTHOR_NAME"
+echo "email: $GIT_AUTHOR_EMAIL"
+
+[[ -n "$GIT_AUTHOR_NAME" ]] && git config user.name $GIT_AUTHOR_NAME
+[[ -n "$GIT_AUTHOR_EMAIL" ]] && git config user.email $GIT_AUTHOR_EMAIL
 
 printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
