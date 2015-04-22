@@ -3,15 +3,17 @@ require 'codeclimate-test-reporter'
 require 'coveralls'
 require 'stringio'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  Coveralls::SimpleCov::Formatter,
-  SimpleCov::Formatter::HTMLFormatter,
-  CodeClimate::TestReporter::Formatter
-]
+if ENV['COVERAGE']
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+    Coveralls::SimpleCov::Formatter,
+    SimpleCov::Formatter::HTMLFormatter,
+    CodeClimate::TestReporter::Formatter
+  ]
 
-SimpleCov.start do
-  add_filter '/vendor/'
-  add_filter '/spec'
+  SimpleCov.start do
+    add_filter '/vendor/'
+    add_filter '/spec'
+  end
 end
 
 require 'construi'
