@@ -7,14 +7,22 @@ set -e
 
 printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
-git config push.default simple
-git checkout master
-git pull --rebase
-git merge --commit ${GIT_COMMIT}
-git push origin
-git checkout develop
-git pull --rebase
+release_commit=`git rev-parse HEAD`
+
+echo "Release commit ${release_commit}..."
+
+echo "Pushing to master..."
+git push -f origin `git rev-parse HEAD`:master
+
+echo "Push to master done."
+
+echo "Updating development version..."
 bundle install --path vendor/bundle
 bundle exec gem bump --version minor
-git push origin
+
+echo "Pushing to develop..."
+git push origin `get rev-parse HEAD`:develop
+echo "Push to develop done."
+
+echo "Release done."
 

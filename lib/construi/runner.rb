@@ -21,6 +21,8 @@ module Construi
 
       puts "Docker url: #{Docker.url}"
 
+      Excon.defaults[:ssl_verify_peer] = false
+
       Docker.validate_version!
       Docker.options[:read_timeout] = 60
       Docker.options[:chunk_size] = 8
