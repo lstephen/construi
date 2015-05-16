@@ -19,7 +19,7 @@ bundle exec rubocop --format html -o target/site/rubocop.html || true
 
 echo "Reports done."
 
-if [[ -n "$GIT_SSH_KEY" ]]
+if [[ -n "$SITE_DEPLOY" ]]
 then
   [[ -n "$GIT_AUTHOR_NAME" ]] && git config user.name $GIT_AUTHOR_NAME
   [[ -n "$GIT_AUTHOR_EMAIL" ]] && git config user.email $GIT_AUTHOR_EMAIL
