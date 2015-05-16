@@ -1,17 +1,14 @@
 image: ruby:1.9
 
 environment:
-  - JENKINS_URL
-  - BUILD_NUMBER
   - COVERAGE
-  - CODECLIMATE_REPO_TOKEN
-  - COVERALLS_REPO_TOKEN
   - GIT_COMMIT
   - GIT_BRANCH
   - GIT_SSH_KEY
   - GIT_AUTHOR_NAME
   - GIT_AUTHOR_EMAIL
   - RUBYGEMS_API_KEY
+  - SITE_DEPLOY
 
 targets:
   build:
@@ -21,6 +18,14 @@ targets:
   install:
     - bundle install --path=vendor/bundle
     - bundle exec rake install
+
+  site:
+    build: construi/site
+    files:
+      - $GIT_SSH_KEY:/root/.ssh/id_rsa:0600
+    run:
+      - bundle install --path=vendor/bundle
+      - bash construi/site/run.sh
 
   release:
     files:

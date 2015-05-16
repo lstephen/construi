@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>{{ site.title }}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="css/main.css" rel="stylesheet"/>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="./">{{ site.title }}</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav pull-right">
+            <li><a href="{{ site.github.project }}">GitHub project</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contribute <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{{ site.github.issues }}">Issues</a></li>
+                <li><a href="{{ site.github.project }}">Fork on GitHub</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="yard/index.html">Yard Doc</a></li>
+                <li><a href="coverage/index.html">SimpleCov</a></li>
+                <li><a href="rubocop.html">Rubocop</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="main-body">
+      <div class="container">
+        {{ content }}
+      </div>
+    </div>
+
+    <footer class="well">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <a href="https://rubygems.org/gems/construi">
+              <img src="https://img.shields.io/gem/v/formatador.svg?style=plastic"/>
+            </a>
+            <a href='http://jenkins.mylonelybear.org/job/construi-develop/'>
+              <img src='http://jenkins.mylonelybear.org/buildStatus/icon?job=construi-develop&style=plastic'>
+            </a>
+            <p class="pull-right"><a href="#">Back to top</a></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  </body>
+</html>
+
