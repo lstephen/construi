@@ -2,7 +2,22 @@
 
 set -e
 
+echo "Generating Site..."
+
 bundle exec jekyll build --source site --destination target/site
+
+echo "Generating Reports..."
+
+echo "Yard..."
+bundle exec yard --output-dir target/site/yard
+
+echo "Coverage..."
+COVERAGE=true bundle exec rake spec
+
+echo "Rubocop..."
+bundle exec rubocop --format html -o target/site/rubocop.html || true
+
+echo "Reports done."
 
 if [[ -n "$GIT_SSH_KEY" ]]
 then
@@ -11,7 +26,10 @@ then
 
   printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
-  echo "Exporting to gh-pages"
+  echo "Deploying site to gh-pages..."
   ghp-import target/site
+  echo "Deployment done."
 fi
+
+echo "Site done."
 
