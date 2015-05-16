@@ -22,6 +22,17 @@ targets:
     - bundle install --path=vendor/bundle
     - bundle exec rake install
 
+  reports:
+    - bundle install --path=vendor/bundle
+    - bash construi/reports/run.sh
+
+  site:
+    build: construi/site
+    run:
+      - bundle install --path=vendor/bundle
+      - bash construi/site/run.sh
+      - bash construi/reports/run.sh
+
   release:
     files:
       - $GIT_SSH_KEY:/root/.ssh/id_rsa:0600

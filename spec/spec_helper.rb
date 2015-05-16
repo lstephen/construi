@@ -1,18 +1,16 @@
 
-require 'codeclimate-test-reporter'
-require 'coveralls'
 require 'stringio'
 
 if ENV['COVERAGE']
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    Coveralls::SimpleCov::Formatter,
-    SimpleCov::Formatter::HTMLFormatter,
-    CodeClimate::TestReporter::Formatter
-  ]
+  require 'simplecov'
+
+  SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
 
   SimpleCov.start do
     add_filter '/vendor/'
     add_filter '/spec'
+
+    coverage_dir 'target/site/coverage'
   end
 end
 
