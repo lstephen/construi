@@ -24,6 +24,8 @@ targets:
 
   site:
     build: construi/site
+    files:
+      - $GIT_SSH_KEY:/root/.ssh/id_rsa:0600
     run:
       - bundle install --path=vendor/bundle
       - bash construi/site/run.sh
