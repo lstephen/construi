@@ -27,7 +27,7 @@ then
   printf "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
   echo "Deploying site to gh-pages..."
-  ghp-import target/site
+  ghp-import -p target/site
   echo "Deployment done."
 fi
 
