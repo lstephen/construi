@@ -1,6 +1,7 @@
 
 require 'yaml'
 
+# Entrypoint for the Construi application
 module Construi
   require 'construi/config'
   require 'construi/runner'
@@ -11,4 +12,3 @@ module Construi
     Runner.new(Config.load_file('construi.yml')).run(targets)
   end
 end
-
