@@ -56,8 +56,8 @@ module Construi
         run chmod
     end
 
-    def run(cmd, env = [])
-      Container.run(self, cmd, env)
+    def run(cmd, options = {})
+      Container.run self, cmd, options
     end
 
     def ==(other)
@@ -116,7 +116,7 @@ module Construi
     end
 
     def run(cmd, env = [])
-      map { |i| i.run(cmd, env) }
+      map { |i| i.run cmd, env: env }
     end
 
     def map

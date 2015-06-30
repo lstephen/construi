@@ -91,7 +91,7 @@ RSpec.describe Construi::Container do
     before { allow(docker_container_class).to receive(:create).and_return docker_container }
     before { allow(Dir).to receive(:pwd).and_return(pwd) }
 
-    subject! { Construi::Container::create(image, cmd, env) }
+    subject! { Construi::Container::create(image, cmd, env: env) }
 
     it do
       expect(docker_container_class).to have_received(:create).with( {
@@ -113,7 +113,7 @@ RSpec.describe Construi::Container do
     before { allow(docker_container).to receive(:wait).and_return({'StatusCode' => 0}) }
     before { allow(docker_container).to receive(:commit).and_return image }
 
-    subject! { Construi::Container.run(image, cmd, []) }
+    subject! { Construi::Container.run(image, cmd) }
 
     it do
       expect(docker_container_class).to have_received(:create).with(

@@ -32,7 +32,7 @@ RSpec.describe Construi::Runner do
     subject! { runner.run(targets) }
 
     it { expect(docker).to have_received(:validate_version!) }
-    it { expect(image).to have_received(:run).with('cmd1', []) }
+    it { expect(image).to have_received(:run).with('cmd1', env: []) }
     it { expect(image).to have_received(:delete) }
 
     it { expect($stdout.string).to include('Running target1...'.green) }
