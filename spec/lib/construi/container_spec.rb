@@ -87,17 +87,19 @@ RSpec.describe Construi::Container do
     let(:cmd) { 'cmd1 p1 p2' }
     let(:env) { ['ENV1=VAL1', 'ENV2=VAL2'] }
     let(:pwd) { '/project/dir' }
+    let(:privileged) { true }
 
     before { allow(docker_container_class).to receive(:create).and_return docker_container }
     before { allow(Dir).to receive(:pwd).and_return(pwd) }
 
-    subject! { Construi::Container::create(image, cmd, env: env) }
+    subject! { Construi::Container::create(image, cmd, env: env, privileged: privileged) }
 
     it do
       expect(docker_container_class).to have_received(:create).with( {
         'Cmd' => ['cmd1', 'p1', 'p2' ],
         'Image' => image_id,
         'Env' => env.to_json,
+        'Privileged' => privileged,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
         'HostConfig' => { 'Binds' => ["#{pwd}:/var/workspace"] }

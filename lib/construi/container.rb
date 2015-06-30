@@ -47,11 +47,13 @@ module Construi
 
     def self.create(image, cmd, options = {})
       env = options[:env] || []
+      privileged = options[:privileged] || false
 
       wrap Docker::Container.create(
         'Cmd' => cmd.split,
         'Image' => image.id,
         'Env' => env.to_json,
+        'Privileged' => privileged,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
         'HostConfig' => { 'Binds' => ["#{Dir.pwd}:/var/workspace"] })
