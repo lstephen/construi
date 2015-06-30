@@ -9,7 +9,7 @@ require 'colorize'
 require 'docker'
 
 module Construi
-
+  # Runs Construi
   class Runner
     def initialize(config)
       @config = config
@@ -24,7 +24,12 @@ module Construi
       Excon.defaults[:ssl_verify_peer] = false
 
       Docker.validate_version!
-      Docker.options[:read_timeout] = 60
+
+      # Don't time out. We can't differentiate between a long running
+      # task and a time out.
+      Docker.options[:read_timeout] = nil
+
+      # Low chunk size as we wish to receive streaming output ASAP
       Docker.options[:chunk_size] = 8
     end
 
@@ -35,9 +40,7 @@ module Construi
 
       puts "Current directory: #{Dir.pwd}"
 
-      targets.map {|t| Target.new t, @config.target(t) } .each(&:run)
+      targets.map { |t| Target.new t, @config.target(t) } .each(&:run)
     end
   end
-
 end
-
