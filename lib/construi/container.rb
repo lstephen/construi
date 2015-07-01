@@ -45,29 +45,37 @@ module Construi
       other.is_a? Container and id == other.id
     end
 
-    def self.create(image, cmd, env)
+    def self.create(image, cmd, options = {})
+      env = options[:env] || []
+      privileged = options[:privileged] || false
+
+      host_config = {
+        'Binds' => ["#{Dir.pwd}:/var/workspace"],
+        'Privileged' => privileged
+      }
+
       wrap Docker::Container.create(
         'Cmd' => cmd.split,
         'Image' => image.id,
         'Env' => env.to_json,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
-        'HostConfig' => { 'Binds' => ["#{Dir.pwd}:/var/workspace"] })
+        'HostConfig' => host_config)
     end
 
     def self.wrap(container)
       new container
     end
 
-    def self.use(image, cmd, env)
-      container = create(image, cmd, env)
+    def self.use(image, cmd, options = {})
+      container = create image, cmd, options
       yield container
     ensure
       container.delete unless container.nil?
     end
 
-    def self.run(image, cmd, env)
-      use(image, cmd, env, &:run)
+    def self.run(image, cmd, options = {})
+      use image, cmd, options, &:run
     end
 
     class Error < StandardError

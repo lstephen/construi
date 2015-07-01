@@ -9,6 +9,8 @@ RSpec.describe Construi::Image do
   let!(:docker_image_class) { class_spy(Docker::Image).as_stubbed_const }
   let!(:container_class) { class_spy(Construi::Container).as_stubbed_const }
 
+  let(:default_options) { { env: [] } }
+
   subject(:image) { Construi::Image.wrap(docker_image) }
 
   describe '#id' do
@@ -42,9 +44,9 @@ RSpec.describe Construi::Image do
     let(:env) { ['VAR1=VALUE1'] }
     let!(:container) { class_spy(Construi::Container).as_stubbed_const }
 
-    subject! { image.run(cmd, env) }
+    subject! { image.run(cmd, env: env) }
 
-    it { expect(container).to have_received(:run).with(image, cmd, env) }
+    it { expect(container).to have_received(:run).with(image, cmd, env: env) }
   end
 
   describe '#insert_local' do
@@ -66,7 +68,7 @@ RSpec.describe Construi::Image do
           .to have_received(:insert_local)
           .with 'localPath' => host, 'outputPath' => container
       end
-      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", []) }
+      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", default_options) }
     end
 
     context 'with permissions' do
@@ -81,10 +83,10 @@ RSpec.describe Construi::Image do
       it do
         expect(container_class)
           .to have_received(:run)
-          .with(image, "chmod -R #{permissions} #{container}", [])
+          .with(image, "chmod -R #{permissions} #{container}", {})
       end
       it { expect($stdout.string).to include(" > chmod -R #{permissions} #{container}") }
-      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", []) }
+      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", default_options) }
     end
 
   end
@@ -232,7 +234,7 @@ RSpec.describe Construi::IntermediateImage do
     context "single run" do
       subject! { intermediate_image.run(cmd, env) }
 
-      it { expect(image).to have_received(:run).with(cmd, env) }
+      it { expect(image).to have_received(:run).with(cmd, env: env) }
       it { expect(image).to_not have_received(:delete) }
       it { expect(second_image).to_not have_received(:delete) }
     end
@@ -240,7 +242,7 @@ RSpec.describe Construi::IntermediateImage do
     context "double run" do
       subject! { intermediate_image.run(cmd, env).run(cmd, env) }
 
-      it { expect(second_image).to have_received(:run).with(cmd, env) }
+      it { expect(second_image).to have_received(:run).with(cmd, env: env) }
       it { expect(second_image).to have_received(:delete) }
     end
   end

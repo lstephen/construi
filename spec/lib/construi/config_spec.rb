@@ -281,7 +281,49 @@ RSpec.describe Construi::Config do
           .to have_attributes :host => host, :container => container, :permissions => permissions
       end
     end
+  end
 
+  describe '#privileged?' do
+    subject { config.target('build').privileged? }
+
+    context 'when privileged absent' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build:
+            run: cmd1
+        YAML
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context 'when present' do
+      let(:config_content) do
+        <<-YAML
+        privileged: true
+        targets:
+          build:
+            run: cmd1
+        YAML
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context 'when overridden on target' do
+      let(:config_content) do
+        <<-YAML
+        privileged: true
+        targets:
+          build:
+            run: cmd1
+            privileged: false
+        YAML
+      end
+
+      it { is_expected.to eq(false) }
+    end
   end
 end
 
