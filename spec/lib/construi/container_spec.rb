@@ -99,11 +99,13 @@ RSpec.describe Construi::Container do
         'Cmd' => ['cmd1', 'p1', 'p2' ],
         'Image' => image_id,
         'Env' => env.to_json,
-        'Privileged' => privileged,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
-        'HostConfig' => { 'Binds' => ["#{pwd}:/var/workspace"] }
-        } )
+        'HostConfig' => {
+          'Binds' => ["#{pwd}:/var/workspace"],
+          'Privileged' => true
+        }
+      } )
     end
     it { is_expected.to eq(Construi::Container.wrap docker_container) }
   end

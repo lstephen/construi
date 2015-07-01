@@ -49,14 +49,18 @@ module Construi
       env = options[:env] || []
       privileged = options[:privileged] || false
 
+      host_config = {
+        'Binds' => ["#{Dir.pwd}:/var/workspace"],
+        'Privileged' => privileged
+      }
+
       wrap Docker::Container.create(
         'Cmd' => cmd.split,
         'Image' => image.id,
         'Env' => env.to_json,
-        'Privileged' => privileged,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
-        'HostConfig' => { 'Binds' => ["#{Dir.pwd}:/var/workspace"] })
+        'HostConfig' => host_config)
     end
 
     def self.wrap(container)
