@@ -48,7 +48,7 @@ targets:
 
 Construi is built using itself, so it's
 [`construi.yml`](https://github.com/lstephen/construi/blob/develop/construi.yml)
-can be used as an example also.
+can be used as an example.
 
 ### Image
 
@@ -81,6 +81,21 @@ targets:
   build:
     - mvn install
     - /usr/local/bin/custom_installed_command.sh
+```
+
+
+### Privileged
+
+An image can be marked as a privileged image.
+This is equivalent to passing `--privileged` to the Docker command line.
+Useful when requiring docker to be part of the build process.
+
+```
+build: lstephen/docker
+privileged: true
+
+targets:
+  build: docker build latest/
 ```
 
 ### Environment
