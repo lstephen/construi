@@ -57,7 +57,7 @@ module Construi
       wrap Docker::Container.create(
         'Cmd' => cmd.split,
         'Image' => image.id,
-        'Env' => env.to_json,
+        'Env' => env,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
         'HostConfig' => host_config)
