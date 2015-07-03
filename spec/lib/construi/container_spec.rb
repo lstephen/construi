@@ -98,7 +98,7 @@ RSpec.describe Construi::Container do
       expect(docker_container_class).to have_received(:create).with( {
         'Cmd' => ['cmd1', 'p1', 'p2' ],
         'Image' => image_id,
-        'Env' => env.to_json,
+        'Env' => env,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
         'HostConfig' => {
