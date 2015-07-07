@@ -5,11 +5,15 @@ require 'securerandom'
 
 RSpec.describe Construi::Image do
   let(:id) {  SecureRandom.hex(16) }
-  let(:docker_image) { instance_double(Docker::Image, :id => id).as_null_object }
+
+  let(:docker_image) do
+    instance_double(Docker::Image, id: id).as_null_object
+  end
+
   let!(:docker_image_class) { class_spy(Docker::Image).as_stubbed_const }
   let!(:container_class) { class_spy(Construi::Container).as_stubbed_const }
 
-  let(:default_options) { { env: [] } }
+  let(:default_options) { {} }
 
   subject(:image) { Construi::Image.wrap(docker_image) }
 
@@ -24,7 +28,9 @@ RSpec.describe Construi::Image do
   end
 
   describe '#tagged?' do
-    before { allow(docker_image).to receive(:info).and_return({ 'RepoTags' => tag }) }
+    before do
+      allow(docker_image).to receive(:info).and_return('RepoTags' => tag)
+    end
 
     subject { image.tagged? }
 
@@ -53,9 +59,15 @@ RSpec.describe Construi::Image do
     let(:host) { '/path/host' }
     let(:container) { '/path/on/container' }
     let(:permissions) { nil }
-    let(:file) { Construi::Config::Files::File.new host, container, permissions }
 
-    before { allow(docker_image).to receive(:info).and_return({ 'RepoTags' => '<none>:<none>' }) }
+    let(:file) do
+      Construi::Config::Files::File.new host, container, permissions
+    end
+
+    before do
+      allow(docker_image).to receive(:info).and_return('RepoTags' => '<none>:<none>')
+    end
+
     before { allow(docker_image).to receive(:insert_local).and_return(docker_image) }
     before { allow(container_class).to receive(:run).and_return image }
 
@@ -92,12 +104,17 @@ RSpec.describe Construi::Image do
   end
 
   describe '.from' do
-    Config = Struct.new :image, :build, :files
+    let(:config) { instance_double(Construi::Config::Environment).as_null_object }
 
     let(:image) { nil }
     let(:build) { nil }
     let(:files) { [] }
-    let(:config) { Config.new image, build, files }
+    let(:privileged?) { false }
+
+    before { allow(config).to receive(:image).and_return image }
+    before { allow(config).to receive(:build).and_return build }
+    before { allow(config).to receive(:files).and_return files }
+    before { allow(config).to receive(:privileged?).and_return privileged? }
 
     [:create, :build_from_dir].each do |m|
       before { allow(docker_image_class).to receive(m).and_return docker_image }
@@ -229,25 +246,22 @@ RSpec.describe Construi::IntermediateImage do
 
   describe '#run' do
     let(:cmd) { 'cmd1' }
-    let(:env) { ['VAR1=VALUE1'] }
+    let(:options) { { env: ['VAR1=VALUE1']} }
 
     context "single run" do
-      subject! { intermediate_image.run(cmd, env) }
+      subject! { intermediate_image.run(cmd, options) }
 
-      it { expect(image).to have_received(:run).with(cmd, env: env) }
+      it { expect(image).to have_received(:run).with(cmd, options) }
       it { expect(image).to_not have_received(:delete) }
       it { expect(second_image).to_not have_received(:delete) }
     end
 
     context "double run" do
-      subject! { intermediate_image.run(cmd, env).run(cmd, env) }
+      subject! { intermediate_image.run(cmd, options).run(cmd, options) }
 
-      it { expect(second_image).to have_received(:run).with(cmd, env: env) }
+      it { expect(second_image).to have_received(:run).with(cmd, options) }
       it { expect(second_image).to have_received(:delete) }
     end
   end
-
-
-
 end
 

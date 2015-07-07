@@ -4,7 +4,7 @@ require 'colorize'
 require 'docker'
 
 module Construi
-
+  # A Docker Image
   class Image
     private_class_method :new
 
@@ -28,7 +28,7 @@ module Construi
       @image.info['RepoTags'] != '<none>:<none>'
     end
 
-    def insert_local(file)
+    def insert_local(file, options = {})
       puts "\nCopying #{file.host} to #{file.container}...".green
 
       img = IntermediateImage.seed(self)
@@ -38,22 +38,25 @@ module Construi
           .insert_local 'localPath' => file.host, 'outputPath' => file.container
       end
 
-      img.map { |i| i.chmod file.container, file.permissions } if file.permissions
+      img.map { |i| i.chmod file.container, file.permissions, options } if file.permissions
 
-      img.run "ls -l #{file.container}"
+      img.run "ls -l #{file.container}", options
 
       img.image
     end
 
-    def insert_locals(files)
-      IntermediateImage.seed(self).reduce(files) { |i, f| i.insert_local f }.image
+    def insert_locals(files, options = {})
+      IntermediateImage
+        .seed(self)
+        .reduce(files) { |a, e| a.insert_local e, options }
+        .image
     end
 
-    def chmod(file, permissions)
-        chmod = "chmod -R #{permissions} #{file}"
+    def chmod(file, permissions, options = {})
+      chmod = "chmod -R #{permissions} #{file}"
 
-        puts " > #{chmod}"
-        run chmod
+      puts " > #{chmod}"
+      run chmod, options
     end
 
     def run(cmd, options = {})
@@ -61,16 +64,16 @@ module Construi
     end
 
     def ==(other)
-      other.is_a? Image and id == other.id
+      other.is_a?(Image) && id == other.id
     end
 
     def self.from(config)
       image = create(config.image) unless config.image.nil?
       image = build(config.build) unless config.build.nil?
 
-      raise Error, "Invalid image configuration: #{config}" unless image
+      fail Error, "Invalid image configuration: #{config}" unless image
 
-      image.insert_locals config.files
+      image.insert_locals config.files, privileged: config.privileged?
     end
 
     def self.create(image)
@@ -82,7 +85,7 @@ module Construi
         id = status['id']
         progress = status['progressDetail']
 
-        if progress.nil? or progress.empty?
+        if progress.nil? || progress.empty?
           print "#{id}: " unless id.nil?
           puts "#{status['status']}"
         end
@@ -92,7 +95,7 @@ module Construi
     def self.build(build)
       puts
       puts "Building image: '#{build}'...".green
-      wrap Docker::Image.build_from_dir(build, :rm => 0) { |s|
+      wrap Docker::Image.build_from_dir(build, rm: 0) { |s|
         puts JSON.parse(s)['stream']
       }
     end
@@ -105,6 +108,9 @@ module Construi
     end
   end
 
+  # An image that represents an intermediatae state of an image.
+  # Useful for performing operations where each opertion is performed on the
+  # result of the last.
   class IntermediateImage
     private_class_method :new
 
@@ -115,8 +121,8 @@ module Construi
       @first = true
     end
 
-    def run(cmd, env = [])
-      map { |i| i.run cmd, env: env }
+    def run(cmd, options = {})
+      map { |i| i.run cmd, options }
     end
 
     def map
