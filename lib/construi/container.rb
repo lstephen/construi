@@ -14,7 +14,7 @@ module Construi
     end
 
     def delete
-      @container.delete
+      @container.delete force: true, v: true
     end
 
     def attach_stdout
