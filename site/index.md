@@ -104,6 +104,7 @@ Declares environment variables that will be passed through or set in the build e
 If no value is provided then the value from the host environment will be used.
 In this example `NEXUS_SERVER_URL` will be set as provided, while `NEXUS_USERNAME` and
 `NEXUS_PASSWORD` will be retrieved from the host.
+Can be used on a per target basis.
 
 ```
 image: maven:3-jdk-7
