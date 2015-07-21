@@ -8,8 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = Construi::VERSION
   spec.authors       = ['Levi Stephen']
   spec.email         = ['levi.stephen@gmail.com']
+
   spec.summary       = 'Build tool using Docker to specify build environment'
   spec.description   = 'Build tool using Docker to specify build environment'
+
   spec.homepage      = 'https://github.com/lstephen/construi'
   spec.license       = 'MIT'
 
@@ -20,7 +22,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 1.9'
 
-  spec.add_dependency 'docker-api', '=1.21.4'
+  spec.add_dependency 'docker-api', '=1.22.0'
   spec.add_dependency 'colorize', '=0.7.7'
 
   spec.add_development_dependency 'bundler', '~> 1.9'
