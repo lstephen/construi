@@ -7,22 +7,38 @@ module Construi
 
     def initialize(container)
       @container = container
+      @stdout_attached = false
     end
 
     def id
       @container.id
     end
 
+    def start
+      @container.start
+      attach_stdout
+    end
+
+    def stop
+      @container.stop
+      @stdout_attached = false
+    end
+
     def delete
+      stop
+      @container.kill
       @container.delete force: true, v: true
     end
 
     def attach_stdout
       @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
-      true
+      @stdout_attached = true
     rescue Docker::Error::TimeoutError
       puts 'Failed to attach to stdout'.yellow
-      false
+    end
+
+    def stdout_attached?
+      @stdout_attached
     end
 
     def commit
@@ -30,11 +46,10 @@ module Construi
     end
 
     def run
-      @container.start
-      attached = attach_stdout
+      start
       status_code = @container.wait['StatusCode']
 
-      puts @container.logs(:stdout => true) unless attached
+      puts @container.logs(:stdout => true) unless stdout_attached?
 
       raise Error, "Cmd returned status code: #{status_code}" unless status_code == 0
 
