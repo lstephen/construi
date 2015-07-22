@@ -60,7 +60,7 @@ module Construi
       other.is_a? Container and id == other.id
     end
 
-    def self.create(image, cmd, options = {})
+    def self.create(image, options = {})
       env = options[:env] || []
       privileged = options[:privileged] || false
 
@@ -69,28 +69,32 @@ module Construi
         'Privileged' => privileged
       }
 
-      wrap Docker::Container.create(
-        'Cmd' => cmd.split,
+      create_options = {
         'Image' => image.id,
         'Env' => env,
         'Tty' => false,
         'WorkingDir' => '/var/workspace',
-        'HostConfig' => host_config)
+        'HostConfig' => host_config
+      }
+
+      create_options['Cmd'] = options[:cmd].split if options.key?(:cmd)
+
+      wrap Docker::Container.create create_options
     end
 
     def self.wrap(container)
       new container
     end
 
-    def self.use(image, cmd, options = {})
-      container = create image, cmd, options
+    def self.use(image, options = {})
+      container = create image, options
       yield container
     ensure
       container.delete unless container.nil?
     end
 
-    def self.run(image, cmd, options = {})
-      use image, cmd, options, &:run
+    def self.run(image, options = {})
+      use image, options, &:run
     end
 
     class Error < StandardError
