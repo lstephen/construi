@@ -104,7 +104,7 @@ RSpec.describe Construi::Image do
   end
 
   describe '.from' do
-    let(:config) { instance_double(Construi::Config::Environment).as_null_object }
+    let(:config) { instance_double(Construi::Config::BuildEnvironment).as_null_object }
 
     let(:image) { nil }
     let(:build) { nil }

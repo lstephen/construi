@@ -11,7 +11,7 @@ module Construi
       end
 
       def privileged?
-        key?(:privileged) ? yaml['privileged'] : with_parent(false, &:privileged?)
+        key?(:privileged) ? get(:privileged) : with_parent(false, &:privileged?)
       end
 
       def image_configured?
@@ -19,7 +19,7 @@ module Construi
       end
 
       def image_configured(what)
-        image_configured? ? yaml[what.to_s] : with_parent(&what)
+        image_configured? ? get(what) : with_parent(&what)
       end
     end
 
@@ -48,15 +48,44 @@ module Construi
       end
 
       def files
-        fs = files_configured? ? yaml['files'].map { |str| File.parse(str) } : []
+        fs = files_configured? ? get(:files).map { |str| File.parse(str) } : []
 
         with_parent([], &:files).concat fs
       end
     end
 
-    module Environment
+    module EnvironmentVariables
+      def env_configured?
+        key? :environment
+      end
+
+      def env_hash
+        parent = with_parent({}, &:env_hash)
+
+        return parent unless env_configured?
+
+        vs = get(:environment).each_with_object({}) do |v, h|
+          key, value = v.split '='
+
+          value = ENV[key] if value.nil? || value.empty?
+
+          h[key] = value
+        end
+
+        parent.merge vs
+      end
+
+      def env
+        env_hash.each_with_object([]) do |(k, v), a|
+          a << "#{k}=#{v}" unless v.nil? || v.empty?
+        end
+      end
+    end
+
+    module BuildEnvironment
       include Image
       include Files
+      include EnvironmentVariables
 
       def parent
         nil
@@ -66,32 +95,22 @@ module Construi
         yaml.is_a?(Hash) && yaml.key?(key.to_s)
       end
 
+      def get(key)
+        yaml[key.to_s]
+      end
+
       def with_parent(or_else = nil)
         parent ? yield(parent) : or_else
       end
     end
 
     class Global
-      include Environment
+      include BuildEnvironment
 
       attr_reader :yaml
 
       def initialize(yaml)
         @yaml = yaml
-      end
-
-      def env
-        return [] if yaml['environment'].nil?
-
-        yaml['environment'].reduce([]) do |acc, e|
-          key = e.partition('=').first
-          value = e.partition('=').last
-
-          value = ENV[key] if value.empty?
-
-          acc << "#{key}=#{value}" unless value.nil? or value.empty?
-          acc
-        end
       end
 
       def target(target)
@@ -104,7 +123,7 @@ module Construi
     end
 
     class Target
-      include Environment
+      include BuildEnvironment
 
       attr_reader :yaml, :parent
 
