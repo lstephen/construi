@@ -1,6 +1,24 @@
 
 module Construi
   module Config
+    module WrappedYaml
+      def parent
+        nil
+      end
+
+      def key?(key)
+        yaml.is_a?(Hash) && yaml.key?(key.to_s)
+      end
+
+      def get(key, default = nil)
+        key?(key) ? yaml[key.to_s] : default
+      end
+
+      def with_parent(or_else = nil)
+        parent ? yield(parent) : or_else
+      end
+    end
+
     module Image
       def image
         image_configured :image
@@ -43,14 +61,8 @@ module Construi
         end
       end
 
-      def files_configured?
-        key? :files
-      end
-
       def files
-        fs = files_configured? ? get(:files).map { |str| File.parse(str) } : []
-
-        with_parent([], &:files).concat fs
+        with_parent([], &:files).concat get(:files, []).map { |s| File.parse s }
       end
     end
 
@@ -62,9 +74,7 @@ module Construi
       def env_hash
         parent = with_parent({}, &:env_hash)
 
-        return parent unless env_configured?
-
-        vs = get(:environment).each_with_object({}) do |v, h|
+        child = get(:environment, {}).each_with_object({}) do |v, h|
           key, value = v.split '='
 
           value = ENV[key] if value.nil? || value.empty?
@@ -72,7 +82,7 @@ module Construi
           h[key] = value
         end
 
-        parent.merge vs
+        parent.merge child
       end
 
       def env
@@ -82,26 +92,36 @@ module Construi
       end
     end
 
+    module Links
+      class Link
+        include WrappedYaml
+        include Image
+        include EnvironmentVariables
+
+        attr_reader :yaml
+
+        def initialize(yaml)
+          @yaml = yaml
+        end
+      end
+
+      def links
+        parent = with_parent({}, &:links)
+
+        child = get(:links, {}).each_with_object({}) do |(k, v), ls|
+          ls[k] = Link.new v
+        end
+
+        parent.merge child
+      end
+    end
+
     module BuildEnvironment
+      include WrappedYaml
       include Image
       include Files
       include EnvironmentVariables
-
-      def parent
-        nil
-      end
-
-      def key?(key)
-        yaml.is_a?(Hash) && yaml.key?(key.to_s)
-      end
-
-      def get(key)
-        yaml[key.to_s]
-      end
-
-      def with_parent(or_else = nil)
-        parent ? yield(parent) : or_else
-      end
+      include Links
     end
 
     class Global

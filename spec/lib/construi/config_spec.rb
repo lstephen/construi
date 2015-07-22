@@ -356,5 +356,80 @@ RSpec.describe Construi::Config do
       it { is_expected.to eq(false) }
     end
   end
+
+  describe '#links' do
+    subject { config.target('build').links }
+
+    context 'no links' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build: cmd1
+        YAML
+      end
+
+      it { is_expected.to eq({}) }
+    end
+
+    context 'link on target' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build:
+            run: cmd1
+            links:
+              db:
+                image: mysql
+                environment:
+                  - VAR1=VALUE1
+        YAML
+      end
+
+      it { is_expected.to include('db') }
+      it { expect(subject['db'].image).to eq('mysql') }
+      it { expect(subject['db'].env).to contain_exactly('VAR1=VALUE1') }
+    end
+
+    context 'link on global level' do
+      let(:config_content) do
+        <<-YAML
+        links:
+          sshd:
+            build: construi/my-sshd
+            privileged: true
+        targets:
+          build:
+            run: cmd1
+        YAML
+      end
+
+      it { is_expected.to include('sshd') }
+      it { expect(subject['sshd'].build).to eq('construi/my-sshd') }
+      it { expect(subject['sshd'].privileged?).to be_truthy }
+    end
+
+    context 'multiple images' do
+      let(:config_content) do
+        <<-YAML
+        links:
+          sshd:
+            build: construi/my-sshd
+        targets:
+          build:
+            run: cmd1
+            links:
+              db:
+                image: mysql
+              nginx:
+                image: mydockers/nginx
+        YAML
+      end
+
+      it { is_expected.to include('sshd', 'db', 'nginx') }
+      it { expect(subject['db'].image).to eq('mysql') }
+      it { expect(subject['nginx'].image).to eq('mydockers/nginx') }
+      it { expect(subject['sshd'].build).to eq('construi/my-sshd') }
+    end
+  end
 end
 
