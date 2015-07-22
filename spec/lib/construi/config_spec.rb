@@ -65,9 +65,16 @@ RSpec.describe Construi::Config do
   end
 
   describe '#env' do
-    subject { config.env }
+    subject { config.target('build').env }
 
     context 'when no environment section' do
+      let(:config_content) do
+        <<-YAML
+        targets:
+          build: cmd1
+        YAML
+      end
+
       it { is_expected.to eq([]) }
     end
 
@@ -77,6 +84,8 @@ RSpec.describe Construi::Config do
         environment:
           - VAR1=VALUE_1
           - VAR2=VALUE_2
+        targets:
+          build: cmd1
         YAML
       end
 
@@ -94,10 +103,32 @@ RSpec.describe Construi::Config do
         environment:
           - VAR1
           - VAR2
+        targets:
+          build: cmd1
         YAML
       end
 
-      it { is_expected.to contain_exactly('VAR1=VALUE_1', 'VAR2=VALUE_2') }
+      it { is_expected.to contain_exactly 'VAR1=VALUE_1', 'VAR2=VALUE_2' }
+    end
+
+    context 'when target specific environment values' do
+      let(:config_content) do
+        <<-YAML
+        environment:
+          - VAR1=VALUE_1
+          - VAR2=VALUE_2
+        targets:
+          build:
+            environment:
+              - VAR1=VALUE_OVERIDEN
+              - VAR3=VALUE_3
+        YAML
+      end
+
+      it do
+        is_expected.to contain_exactly(
+          'VAR1=VALUE_OVERIDEN', 'VAR2=VALUE_2', 'VAR3=VALUE_3')
+      end
     end
   end
 
