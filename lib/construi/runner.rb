@@ -9,6 +9,8 @@ require 'colorize'
 require 'docker'
 
 module Construi
+  DOCKER_TIMEOUT = 60
+
   # Runs Construi
   class Runner
     def initialize(config)
@@ -25,9 +27,7 @@ module Construi
 
       Docker.validate_version!
 
-      # Don't time out. We can't differentiate between a long running
-      # task and a time out.
-      Docker.options[:read_timeout] = nil
+      Docker.options[:read_timeout] = DOCKER_TIMEOUT
 
       # Low chunk size as we wish to receive streaming output ASAP
       Docker.options[:chunk_size] = 8
@@ -42,5 +42,13 @@ module Construi
 
       targets.map { |t| Target.new t, @config.target(t) } .each(&:run)
     end
+  end
+
+  def self.with_no_docker_timeout
+    Docker.options[:read_timeout] = nil
+
+    yield self if block_given?
+
+    Docker.options[:read_timeout] = DOCKER_TIMEOUT
   end
 end

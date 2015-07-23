@@ -81,8 +81,8 @@ module Construi
     end
 
     def self.create(image)
-      puts
-      puts "Creating image: '#{image}'...".green
+      Console.progress "Creating image: '#{image}'..."
+
       wrap Docker::Image.create('fromImage' => image) { |s|
         status = JSON.parse(s)
 
@@ -97,8 +97,8 @@ module Construi
     end
 
     def self.build(build)
-      puts
-      puts "Building image: '#{build}'...".green
+      Console.progress "Building image: '#{build}'..."
+
       wrap Docker::Image.build_from_dir(build, rm: 0) { |s|
         puts JSON.parse(s)['stream']
       }

@@ -40,7 +40,7 @@ module Construi
       @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
       @stdout_attached = true
     rescue Docker::Error::TimeoutError
-      puts 'Failed to attach to stdout'.yellow
+      Console.warn 'Failed to attach to stdout'
     end
 
     def log_lifecycle?
@@ -48,10 +48,7 @@ module Construi
     end
 
     def log_lifecycle(msg)
-      if log_lifecycle?
-        puts
-        puts msg.green
-      end
+      Console.progress msg if log_lifecycle?
     end
 
     def stdout_attached?
@@ -68,7 +65,7 @@ module Construi
 
       puts @container.logs(:stdout => true) unless stdout_attached?
 
-      raise Error, "Cmd returned status code: #{status_code}" unless status_code == 0
+      raise RunError, "Cmd returned status code: #{status_code}" unless status_code == 0
 
       commit
     end
@@ -114,7 +111,7 @@ module Construi
       use image, options, &:run
     end
 
-    class Error < StandardError
+    class RunError < StandardError
     end
 
   end

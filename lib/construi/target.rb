@@ -1,3 +1,4 @@
+require 'construi/console'
 
 module Construi
   class Target
@@ -13,15 +14,17 @@ module Construi
     end
 
     def run
-      puts "Running #{name}...".green
+      Console.progress "Running #{name}..."
 
       links = start_linked_images
 
       begin
         final_image = IntermediateImage.seed(create_initial_image).reduce(commands) do |image, command|
-          puts
-          puts " > #{command}".green
-          image.run command, @config.options
+          Console.progress " > #{command}"
+
+          Construi.with_no_docker_timeout do
+            image.run command, @config.options
+          end
         end
 
         final_image.delete
