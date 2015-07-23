@@ -26,9 +26,7 @@ module Construi
             o << "#{l.id}:#{l.name}"
           end
 
-          Construi.with_no_docker_timeout do
-            image.run command, @config.options.merge(links: link_option)
-          end
+          image.run command, @config.options.merge(links: link_option)
         end
 
         final_image.delete
