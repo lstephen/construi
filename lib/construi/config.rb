@@ -92,17 +92,25 @@ module Construi
       end
     end
 
+    module Options
+      def options
+        { env: env, privileged: privileged? }
+      end
+    end
+
     module Links
       class Link
         include WrappedYaml
         include Image
         include EnvironmentVariables
+        include Options
 
         attr_reader :yaml
 
         def initialize(yaml)
           @yaml = yaml
         end
+
       end
 
       def links
@@ -144,6 +152,7 @@ module Construi
 
     class Target
       include BuildEnvironment
+      include Options
 
       attr_reader :yaml, :parent
 
@@ -154,10 +163,6 @@ module Construi
 
       def commands
         Array(@yaml.is_a?(Hash) ? @yaml['run'] : @yaml)
-      end
-
-      def options
-        { env: parent.env, privileged: parent.privileged? }
       end
     end
 

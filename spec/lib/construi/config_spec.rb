@@ -226,11 +226,13 @@ RSpec.describe Construi::Config do
         targets:
           build:
             image: build:image
+            privileged: true
             run: cmd1
         YAML
       end
 
       it { is_expected.to have_attributes(:image => 'build:image', :build => nil) }
+      it { expect(subject.options).to include(privileged: true) }
     end
 
     context 'when build for target and image for global' do
