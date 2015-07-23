@@ -1,7 +1,5 @@
 
-
 module Construi
-
   class Target
     attr_reader :name, :config
 
@@ -17,7 +15,7 @@ module Construi
     def run
       puts "Running #{name}...".green
 
-      links = create_linked_images.map(&:start)
+      links = start_linked_images
 
       begin
         final_image = IntermediateImage.seed(create_initial_image).reduce(commands) do |image, command|
@@ -36,9 +34,9 @@ module Construi
       return Image.from(@config)
     end
 
-    def create_linked_images
-      @config.links.map do |(_, v)|
-        Image.from(v)
+    def start_linked_images
+      @config.links.map do |(name, config)|
+        Image.from(config).start(config.options.merge name: name, log_lifecycle: true)
       end
     end
   end

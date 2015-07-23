@@ -60,7 +60,7 @@ module Construi
     end
 
     def start(options = {})
-      Container.create(self, options).start
+      Container.create(self, options).tap(&:start)
     end
 
     def run(cmd, options = {})

@@ -1,13 +1,16 @@
 require 'construi/image'
 
 module Construi
-
   class Container
     private_class_method :new
 
-    def initialize(container)
+    attr_reader :name
+
+    def initialize(container, options = {})
       @container = container
       @stdout_attached = false
+      @name = options[:name] || @container.id
+      @log_lifecycle = options[:log_lifecycle] || false
     end
 
     def id
@@ -15,12 +18,13 @@ module Construi
     end
 
     def start
+      log_lifecycle "Starting container: '#{name}'..."
       @container.start
       attach_stdout
-      self
     end
 
     def stop
+      log_lifecycle "Stopping container: '#{name}'..."
       @container.stop
       @stdout_attached = false
     end
@@ -29,6 +33,7 @@ module Construi
       stop
       @container.kill
       @container.delete force: true, v: true
+      log_lifecycle "Deleted container: '#{name}'"
     end
 
     def attach_stdout
@@ -36,6 +41,17 @@ module Construi
       @stdout_attached = true
     rescue Docker::Error::TimeoutError
       puts 'Failed to attach to stdout'.yellow
+    end
+
+    def log_lifecycle?
+      @log_lifecycle
+    end
+
+    def log_lifecycle(msg)
+      if log_lifecycle?
+        puts
+        puts msg.green
+      end
     end
 
     def stdout_attached?
@@ -80,11 +96,11 @@ module Construi
 
       create_options['Cmd'] = options[:cmd].split if options.key?(:cmd)
 
-      wrap Docker::Container.create create_options
+      wrap Docker::Container.create(create_options), options
     end
 
-    def self.wrap(container)
-      new container
+    def self.wrap(container, options = {})
+      new container, options
     end
 
     def self.use(image, options = {})
@@ -102,5 +118,6 @@ module Construi
     end
 
   end
+
 
 end
