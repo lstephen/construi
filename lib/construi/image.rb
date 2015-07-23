@@ -59,6 +59,10 @@ module Construi
       run chmod, options
     end
 
+    def start(options = {})
+      Container.create(self, options).start
+    end
+
     def run(cmd, options = {})
       Container.run self, options.merge(cmd: cmd)
     end

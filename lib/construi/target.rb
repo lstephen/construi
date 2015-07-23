@@ -17,17 +17,29 @@ module Construi
     def run
       puts "Running #{name}...".green
 
-      final_image = IntermediateImage.seed(initial_image).reduce(commands) do |image, command|
-        puts
-        puts " > #{command}".green
-        image.run command, @config.options
-      end
+      links = create_linked_images.map(&:start)
 
-      final_image.delete
+      begin
+        final_image = IntermediateImage.seed(create_initial_image).reduce(commands) do |image, command|
+          puts
+          puts " > #{command}".green
+          image.run command, @config.options
+        end
+
+        final_image.delete
+      ensure
+        links.map(&:delete)
+      end
     end
 
-    def initial_image
+    def create_initial_image
       return Image.from(@config)
+    end
+
+    def create_linked_images
+      @config.links.map do |(_, v)|
+        Image.from(v)
+      end
     end
   end
 

@@ -17,6 +17,7 @@ module Construi
     def start
       @container.start
       attach_stdout
+      self
     end
 
     def stop

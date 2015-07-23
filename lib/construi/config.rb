@@ -102,6 +102,7 @@ module Construi
       class Link
         include WrappedYaml
         include Image
+        include Files
         include EnvironmentVariables
         include Options
 
