@@ -44,11 +44,19 @@ module Construi
     end
   end
 
-  def self.with_no_docker_timeout
-    Docker.options[:read_timeout] = nil
-
-    yield self if block_given?
-  ensure
-    Docker.options[:read_timeout] = DOCKER_TIMEOUT
+  def self.with_no_docker_timeout(&block)
+    with_docker_timeout(nil, &block)
   end
+
+  def self.with_docker_timeout(timeout = DOCKER_TIMEOUT, &block)
+    original_timeout = Docker.options[:read_timeout]
+
+    Docker.options[:read_timeout] = timeout
+
+    block.call
+
+  ensure
+    Docker.options[:read_timeout] = original_timeout
+  end
+
 end

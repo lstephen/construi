@@ -37,7 +37,9 @@ module Construi
     end
 
     def attach_stdout
-      @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
+      Construi.with_docker_timeout do
+        @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
+      end
       @stdout_attached = true
     rescue Docker::Error::TimeoutError
       Console.warn 'Failed to attach to stdout'
@@ -59,7 +61,7 @@ module Construi
       Image.wrap(@container.commit)
     end
 
-    def run
+    def run(options = {})
       start
       status_code = @container.wait['StatusCode']
 
