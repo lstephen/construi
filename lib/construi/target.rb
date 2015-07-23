@@ -22,8 +22,12 @@ module Construi
         final_image = IntermediateImage.seed(create_initial_image).reduce(commands) do |image, command|
           Console.progress " > #{command}"
 
+          link_option = links.each_with_object([]) do |l, o|
+            o << "#{l.id}:#{l.name}"
+          end
+
           Construi.with_no_docker_timeout do
-            image.run command, @config.options
+            image.run command, @config.options.merge(links: link_option)
           end
         end
 
@@ -31,6 +35,8 @@ module Construi
       ensure
         links.map(&:delete)
       end
+
+      Console.progress "Build Successful."
     end
 
     def create_initial_image

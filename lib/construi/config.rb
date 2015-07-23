@@ -108,17 +108,16 @@ module Construi
 
         attr_reader :yaml
 
-        def initialize(yaml)
+        def initialize(name, yaml)
           @yaml = yaml
         end
-
       end
 
       def links
         parent = with_parent({}, &:links)
 
         child = get(:links, {}).each_with_object({}) do |(k, v), ls|
-          ls[k] = Link.new v
+          ls[k] = Link.new k, v
         end
 
         parent.merge child

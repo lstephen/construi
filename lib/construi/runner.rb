@@ -48,7 +48,7 @@ module Construi
     Docker.options[:read_timeout] = nil
 
     yield self if block_given?
-
+  ensure
     Docker.options[:read_timeout] = DOCKER_TIMEOUT
   end
 end

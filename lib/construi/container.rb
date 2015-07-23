@@ -77,10 +77,12 @@ module Construi
     def self.create(image, options = {})
       env = options[:env] || []
       privileged = options[:privileged] || false
+      links = options[:links] || []
 
       host_config = {
         'Binds' => ["#{Dir.pwd}:/var/workspace"],
-        'Privileged' => privileged
+        'Privileged' => privileged,
+        'Links' => links
       }
 
       create_options = {

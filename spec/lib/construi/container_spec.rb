@@ -79,7 +79,7 @@ RSpec.describe Construi::Container do
     context 'when command fails' do
       let(:status_code) { 1 }
 
-      it { expect { run.call }.to raise_error Construi::Container::Error,  /status code: 1/}
+      it { expect { run.call }.to raise_error Construi::Container::RunError,  /status code: 1/}
     end
   end
 
@@ -103,7 +103,8 @@ RSpec.describe Construi::Container do
         'WorkingDir' => '/var/workspace',
         'HostConfig' => {
           'Binds' => ["#{pwd}:/var/workspace"],
-          'Privileged' => true
+          'Privileged' => true,
+          'Links' => []
         }
       } )
     end
