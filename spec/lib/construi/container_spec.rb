@@ -40,7 +40,7 @@ RSpec.describe Construi::Container do
       before do
         allow(docker_container)
           .to receive(:attach)
-          .and_raise(Docker::Error::TimeoutError.new)
+          .and_raise(Timeout::Error.new)
       end
 
       subject! { attach_stdout.call }
@@ -69,7 +69,7 @@ RSpec.describe Construi::Container do
 
       subject! { run.call }
 
-      it { expect(docker_container).to have_received(:start) }
+      it { expect(docker_container).to have_received(:start!) }
       it { expect(docker_container).to have_received(:attach).with(:stream => true, :logs => true) }
       it { expect(docker_container).to have_received(:wait) }
       it { expect(docker_container).to have_received(:commit) }
@@ -128,7 +128,7 @@ RSpec.describe Construi::Container do
         }))
     end
     it { is_expected.to eq(Construi::Image.wrap image) }
-    it { expect(docker_container).to have_received(:start) }
+    it { expect(docker_container).to have_received(:start!) }
     it { expect(docker_container).to have_received(:commit) }
     it { expect(docker_container).to have_received(:stop) }
     it { expect(docker_container).to have_received(:kill) }

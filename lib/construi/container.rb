@@ -37,9 +37,11 @@ module Construi
     end
 
     def attach_stdout
-      @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
-      @stdout_attached = true
-    rescue Docker::Error::TimeoutError
+      Timeout::timeout(30) do
+        @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
+        @stdout_attached = true
+      end
+    rescue Timeout::Error
       Console.warn 'Failed to attach to stdout'
     end
 
