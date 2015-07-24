@@ -59,8 +59,12 @@ module Construi
       run chmod, options
     end
 
+    def start(options = {})
+      Container.create(self, options).tap(&:start)
+    end
+
     def run(cmd, options = {})
-      Container.run self, cmd, options
+      Container.run self, options.merge(cmd: cmd)
     end
 
     def ==(other)
@@ -77,8 +81,8 @@ module Construi
     end
 
     def self.create(image)
-      puts
-      puts "Creating image: '#{image}'...".green
+      Console.progress "Creating image: '#{image}'..."
+
       wrap Docker::Image.create('fromImage' => image) { |s|
         status = JSON.parse(s)
 
@@ -86,17 +90,19 @@ module Construi
         progress = status['progressDetail']
 
         if progress.nil? || progress.empty?
-          print "#{id}: " unless id.nil?
-          puts "#{status['status']}"
+          msg = ''
+          msg << "#{id}: " unless id.nil?
+          msg << status['status']
+          Console.output image, msg
         end
       }
     end
 
     def self.build(build)
-      puts
-      puts "Building image: '#{build}'...".green
+      Console.progress "Building image: '#{build}'..."
+
       wrap Docker::Image.build_from_dir(build, rm: 0) { |s|
-        puts JSON.parse(s)['stream']
+        Console.output build, JSON.parse(s)['stream']
       }
     end
 

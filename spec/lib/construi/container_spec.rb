@@ -30,22 +30,11 @@ RSpec.describe Construi::Container do
           .and_yield('stream', 'msg2')
       end
 
-      subject! { attach_stdout.call }
+      subject! { attach_stdout.call.join }
 
       it { expect(docker_container).to have_received(:attach).with(:stream => true, :logs => true) }
-      it { expect($stdout.string).to include("msg1\nmsg2") }
-    end
-
-    context 'when attach times out' do
-      before do
-        allow(docker_container)
-          .to receive(:attach)
-          .and_raise(Docker::Error::TimeoutError.new)
-      end
-
-      subject! { attach_stdout.call }
-
-      it { expect($stdout.string).to include('Failed to attach to stdout'.yellow) }
+      it { expect($stdout.string).to include("msg1\n") }
+      it { expect($stdout.string).to include("msg2\n") }
     end
   end
 
@@ -69,8 +58,7 @@ RSpec.describe Construi::Container do
 
       subject! { run.call }
 
-      it { expect(docker_container).to have_received(:start) }
-      it { expect(docker_container).to have_received(:attach).with(:stream => true, :logs => true) }
+      it { expect(docker_container).to have_received(:start!) }
       it { expect(docker_container).to have_received(:wait) }
       it { expect(docker_container).to have_received(:commit) }
       it { is_expected.to eq(Construi::Image.wrap(image)) }
@@ -79,7 +67,7 @@ RSpec.describe Construi::Container do
     context 'when command fails' do
       let(:status_code) { 1 }
 
-      it { expect { run.call }.to raise_error Construi::Container::Error,  /status code: 1/}
+      it { expect { run.call }.to raise_error Construi::Container::RunError,  /status code: 1/}
     end
   end
 
@@ -92,7 +80,7 @@ RSpec.describe Construi::Container do
     before { allow(docker_container_class).to receive(:create).and_return docker_container }
     before { allow(Dir).to receive(:pwd).and_return(pwd) }
 
-    subject! { Construi::Container::create(image, cmd, env: env, privileged: privileged) }
+    subject! { Construi::Container::create image, cmd: cmd, env: env, privileged: privileged }
 
     it do
       expect(docker_container_class).to have_received(:create).with( {
@@ -103,7 +91,8 @@ RSpec.describe Construi::Container do
         'WorkingDir' => '/var/workspace',
         'HostConfig' => {
           'Binds' => ["#{pwd}:/var/workspace"],
-          'Privileged' => true
+          'Privileged' => true,
+          'Links' => []
         }
       } )
     end
@@ -117,7 +106,7 @@ RSpec.describe Construi::Container do
     before { allow(docker_container).to receive(:wait).and_return({'StatusCode' => 0}) }
     before { allow(docker_container).to receive(:commit).and_return image }
 
-    subject! { Construi::Container.run(image, cmd) }
+    subject! { Construi::Container.run image, cmd: cmd }
 
     it do
       expect(docker_container_class).to have_received(:create).with(
@@ -127,9 +116,11 @@ RSpec.describe Construi::Container do
         }))
     end
     it { is_expected.to eq(Construi::Image.wrap image) }
-    it { expect(docker_container).to have_received(:start) }
+    it { expect(docker_container).to have_received(:start!) }
     it { expect(docker_container).to have_received(:commit) }
-    it { expect(docker_container).to have_received(:delete) }
+    it { expect(docker_container).to have_received(:stop) }
+    it { expect(docker_container).to have_received(:kill) }
+    it { expect(docker_container).to have_received(:delete).with(hash_including(v: true)) }
   end
 
 end

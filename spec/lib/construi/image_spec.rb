@@ -52,7 +52,7 @@ RSpec.describe Construi::Image do
 
     subject! { image.run(cmd, env: env) }
 
-    it { expect(container).to have_received(:run).with(image, cmd, env: env) }
+    it { expect(container).to have_received(:run).with(image, cmd: cmd, env: env) }
   end
 
   describe '#insert_local' do
@@ -80,7 +80,7 @@ RSpec.describe Construi::Image do
           .to have_received(:insert_local)
           .with 'localPath' => host, 'outputPath' => container
       end
-      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", default_options) }
+      it { expect(container_class).to have_received(:run).with(image, default_options.merge(cmd: "ls -l #{container}")) }
     end
 
     context 'with permissions' do
@@ -95,10 +95,10 @@ RSpec.describe Construi::Image do
       it do
         expect(container_class)
           .to have_received(:run)
-          .with(image, "chmod -R #{permissions} #{container}", {})
+          .with(image, cmd: "chmod -R #{permissions} #{container}")
       end
       it { expect($stdout.string).to include(" > chmod -R #{permissions} #{container}") }
-      it { expect(container_class).to have_received(:run).with(image, "ls -l #{container}", default_options) }
+      it { expect(container_class).to have_received(:run).with(image, default_options.merge(cmd: "ls -l #{container}")) }
     end
 
   end
@@ -191,7 +191,7 @@ RSpec.describe Construi::Image do
     end
 
     it 'outputs build status messages' do
-      expect($stdout.string).to include("msg1\nmsg2\n")
+      expect($stdout.string).to match(/msg1\n.*msg2\n/)
     end
   end
 
@@ -220,7 +220,7 @@ RSpec.describe Construi::Image do
     end
 
     it 'outputs create status messages' do
-      expect($stdout.string).to include("id: msg1\nid: msg2\nmsg4\n")
+      expect($stdout.string).to match(/id: msg1\n.*id: msg2\n.*msg4\n/)
     end
   end
 end

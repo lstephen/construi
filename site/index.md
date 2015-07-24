@@ -136,6 +136,32 @@ targets:
     run: scripts/construi/deploy.sh
 ```
 
+### Links
+
+Allows specifying containers that will be linked to the build container during the build
+process.
+This is useful, for example, in having a database running durings tests.
+Linked containers allow setting of environment, files, and privileged as per the build
+container.
+Links can be specified on a global or per target level.
+
+```
+image: ruby:1.9
+
+targets:
+  integration-tests:
+    environment:
+      - MYSQL_HOST=mysql
+    run:
+      - bundle install --path=vendor/bundle
+      - rake test:integration
+    links:
+      mysql:
+        image: mysql:5.5
+        environment:
+          - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+```
+
 ### Targets
 
 Any number of targets can be specified.

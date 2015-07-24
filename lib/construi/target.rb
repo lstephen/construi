@@ -1,7 +1,6 @@
-
+require 'construi/console'
 
 module Construi
-
   class Target
     attr_reader :name, :config
 
@@ -15,19 +14,37 @@ module Construi
     end
 
     def run
-      puts "Running #{name}...".green
+      Console.progress "Running #{name}..."
 
-      final_image = IntermediateImage.seed(initial_image).reduce(commands) do |image, command|
-        puts
-        puts " > #{command}".green
-        image.run command, @config.options
+      links = start_linked_images
+
+      begin
+        final_image = IntermediateImage.seed(create_initial_image).reduce(commands) do |image, command|
+          Console.progress " > #{command}"
+
+          link_option = links.each_with_object([]) do |l, o|
+            o << "#{l.id}:#{l.name}"
+          end
+
+          image.run command, @config.options.merge(links: link_option, name: name)
+        end
+
+        final_image.delete
+      ensure
+        links.map(&:delete)
       end
 
-      final_image.delete
+      Console.progress "Build Successful."
     end
 
-    def initial_image
+    def create_initial_image
       return Image.from(@config)
+    end
+
+    def start_linked_images
+      @config.links.map do |(name, config)|
+        Image.from(config).start(config.options.merge name: name, log_lifecycle: true)
+      end
     end
   end
 
