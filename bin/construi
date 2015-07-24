@@ -3,3 +3,4 @@
 require 'construi'
 
 Construi.run ARGV
+

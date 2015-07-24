@@ -1,6 +1,4 @@
 
-require 'yaml'
-
 # Entrypoint for the Construi application
 module Construi
   require 'construi/config'
