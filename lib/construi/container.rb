@@ -8,7 +8,6 @@ module Construi
 
     def initialize(container, options = {})
       @container = container
-      @stdout_attached = false
       @name = options[:name] || @container.id
       @log_lifecycle = options[:log_lifecycle] || false
     end
@@ -26,7 +25,6 @@ module Construi
     def stop
       log_lifecycle "Stopping container: '#{name}'..."
       @container.stop
-      @stdout_attached = false
     end
 
     def delete
@@ -37,12 +35,9 @@ module Construi
     end
 
     def attach_stdout
-      Timeout::timeout(30) do
-        @container.attach(:stream => true, :logs => true) { |s, c| puts c; $stdout.flush }
-        @stdout_attached = true
+      Thread.new do
+        @container.attach(:stream => true, :logs => true) { |_, c| Console.output name, c }
       end
-    rescue Timeout::Error
-      Console.warn 'Failed to attach to stdout'
     end
 
     def log_lifecycle?
@@ -53,10 +48,6 @@ module Construi
       Console.progress msg if log_lifecycle?
     end
 
-    def stdout_attached?
-      @stdout_attached
-    end
-
     def commit
       Image.wrap(@container.commit)
     end
@@ -64,8 +55,6 @@ module Construi
     def run
       start
       status_code = @container.wait['StatusCode']
-
-      puts @container.logs(:stdout => true) unless stdout_attached?
 
       raise RunError, "Cmd returned status code: #{status_code}" unless status_code == 0
 

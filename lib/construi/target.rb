@@ -26,7 +26,7 @@ module Construi
             o << "#{l.id}:#{l.name}"
           end
 
-          image.run command, @config.options.merge(links: link_option)
+          image.run command, @config.options.merge(links: link_option, name: name)
         end
 
         final_image.delete

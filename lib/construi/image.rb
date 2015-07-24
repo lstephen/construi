@@ -90,8 +90,10 @@ module Construi
         progress = status['progressDetail']
 
         if progress.nil? || progress.empty?
-          print "#{id}: " unless id.nil?
-          puts "#{status['status']}"
+          msg = ''
+          msg << "#{id}: " unless id.nil?
+          msg << status['status']
+          Console.output image, msg
         end
       }
     end
@@ -100,7 +102,7 @@ module Construi
       Console.progress "Building image: '#{build}'..."
 
       wrap Docker::Image.build_from_dir(build, rm: 0) { |s|
-        puts JSON.parse(s)['stream']
+        Console.output build, JSON.parse(s)['stream']
       }
     end
 

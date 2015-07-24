@@ -191,7 +191,7 @@ RSpec.describe Construi::Image do
     end
 
     it 'outputs build status messages' do
-      expect($stdout.string).to include("msg1\nmsg2\n")
+      expect($stdout.string).to match(/msg1\n.*msg2\n/)
     end
   end
 
@@ -220,7 +220,7 @@ RSpec.describe Construi::Image do
     end
 
     it 'outputs create status messages' do
-      expect($stdout.string).to include("id: msg1\nid: msg2\nmsg4\n")
+      expect($stdout.string).to match(/id: msg1\n.*id: msg2\n.*msg4\n/)
     end
   end
 end

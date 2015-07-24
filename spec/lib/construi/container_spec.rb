@@ -30,22 +30,11 @@ RSpec.describe Construi::Container do
           .and_yield('stream', 'msg2')
       end
 
-      subject! { attach_stdout.call }
+      subject! { attach_stdout.call.join }
 
       it { expect(docker_container).to have_received(:attach).with(:stream => true, :logs => true) }
-      it { expect($stdout.string).to include("msg1\nmsg2") }
-    end
-
-    context 'when attach times out' do
-      before do
-        allow(docker_container)
-          .to receive(:attach)
-          .and_raise(Timeout::Error.new)
-      end
-
-      subject! { attach_stdout.call }
-
-      it { expect($stdout.string).to include('Failed to attach to stdout'.yellow) }
+      it { expect($stdout.string).to include("msg1\n") }
+      it { expect($stdout.string).to include("msg2\n") }
     end
   end
 
@@ -70,7 +59,6 @@ RSpec.describe Construi::Container do
       subject! { run.call }
 
       it { expect(docker_container).to have_received(:start!) }
-      it { expect(docker_container).to have_received(:attach).with(:stream => true, :logs => true) }
       it { expect(docker_container).to have_received(:wait) }
       it { expect(docker_container).to have_received(:commit) }
       it { is_expected.to eq(Construi::Image.wrap(image)) }
