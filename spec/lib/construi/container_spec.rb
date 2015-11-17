@@ -92,7 +92,8 @@ RSpec.describe Construi::Container do
         'HostConfig' => {
           'Binds' => ["#{pwd}:/var/workspace"],
           'Privileged' => true,
-          'Links' => []
+          'Links' => [],
+          'VolumesFrom' => []
         }
       } )
     end

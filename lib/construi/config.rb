@@ -93,9 +93,19 @@ module Construi
       end
     end
 
+    module Volumes
+      def volumes
+        with_parent([], &:volumes).concat get(:volumes, [])
+      end
+
+      def volumes_from
+        with_parent([], &:volumes_from).concat get(:volumes_from, [])
+      end
+    end
+
     module Options
       def options
-        { env: env, privileged: privileged? }
+        { env: env, privileged: privileged?, volumes: volumes }
       end
     end
 
@@ -105,6 +115,7 @@ module Construi
         include Image
         include Files
         include EnvironmentVariables
+        include Volumes
         include Options
 
         attr_reader :yaml
@@ -130,6 +141,7 @@ module Construi
       include Image
       include Files
       include EnvironmentVariables
+      include Volumes
       include Links
     end
 

@@ -22,11 +22,13 @@ module Construi
         final_image = IntermediateImage.seed(create_initial_image).reduce(commands) do |image, command|
           Console.progress " > #{command}"
 
-          link_option = links.each_with_object([]) do |l, o|
-            o << "#{l.id}:#{l.name}"
-          end
+          options = config.options.merge(
+            links: link_option(links),
+            volumes_from: volumes_from_option(config, links),
+            name: name
+          )
 
-          image.run command, @config.options.merge(links: link_option, name: name)
+          image.run command, options
         end
 
         final_image.delete
@@ -43,7 +45,26 @@ module Construi
 
     def start_linked_images
       @config.links.map do |(name, config)|
-        Image.from(config).start(config.options.merge name: name, log_lifecycle: true)
+        options = config.options.merge(
+          name: name,
+          log_lifecycle: true
+        )
+
+        Image.from(config).start options
+      end
+    end
+
+    def link_option(links)
+      links.each_with_object([]) do |l, o|
+        o << "#{l.id}:#{l.name}"
+      end
+    end
+
+    def volumes_from_option(config, links)
+      config.volumes_from.each_with_object([]) do |v, o|
+        volume_from = links.detect { |l| l.name == v }
+
+        o << (volume_from.nil? ? v : volume_from.id)
       end
     end
   end
