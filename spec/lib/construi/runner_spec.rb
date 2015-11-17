@@ -9,6 +9,9 @@ RSpec.describe Construi::Runner do
 
   before { allow(image_class).to receive(:from).and_return image }
 
+  let(:option_parser) { instance_double(OptionParser).as_null_object }
+  before { allow(OptionParser).to receive(:new).and_return option_parser }
+
   subject(:runner) { Construi::Runner.new(config) }
 
   describe '#run' do
@@ -32,7 +35,16 @@ RSpec.describe Construi::Runner do
     subject! { runner.run(targets) }
 
     it { expect(docker).to have_received(:validate_version!) }
-    it { expect(image).to have_received(:run).with('cmd1', env: [], privileged: false, links: [], name: 'target1') }
+    it do
+      expect(image).to have_received(:run)
+        .with('cmd1',
+          env: [],
+          privileged: false,
+          volumes: [],
+          volumes_from: [],
+          links: [],
+          name: 'target1')
+    end
     it { expect(image).to have_received(:delete) }
 
     it { expect($stdout.string).to include('Running target1...'.green) }

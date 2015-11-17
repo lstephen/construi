@@ -69,11 +69,14 @@ module Construi
       env = options[:env] || []
       privileged = options[:privileged] || false
       links = options[:links] || []
+      volumes = options[:volumes] || []
+      volumes_from = options[:volumes_from] || []
 
       host_config = {
-        'Binds' => ["#{Dir.pwd}:/var/workspace"],
+        'Binds' => ["#{Dir.pwd}:/var/workspace"].concat(volumes),
         'Privileged' => privileged,
-        'Links' => links
+        'Links' => links,
+        'VolumesFrom' => volumes_from
       }
 
       create_options = {

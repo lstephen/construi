@@ -1,3 +1,4 @@
+require 'construi/options'
 
 module Construi
   module Console
@@ -11,6 +12,10 @@ module Construi
       puts msg.green
     end
 
+    def self.verbose(msg)
+      puts msg if Options.enabled?(:verbose)
+    end
+
     def self.progress(msg)
       puts
       info msg
@@ -22,6 +27,25 @@ module Construi
       end
     end
 
+    def self.logger(name)
+      Logger.new name
+    end
+
+    class Logger
+      attr_reader :name
+
+      def initialize(name)
+        @name = name
+      end
+
+      def debug?
+        true
+      end
+
+      def debug(msg)
+        Console.verbose "#{name}: #{msg}"
+      end
+    end
   end
 end
 
