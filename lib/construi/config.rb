@@ -105,7 +105,7 @@ module Construi
 
     module Options
       def options
-        { env: env, privileged: privileged?, volumes: volumes, volumes_from: volumes_from }
+        { env: env, privileged: privileged?, volumes: volumes }
       end
     end
 
