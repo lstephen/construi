@@ -6,39 +6,54 @@ from compose.cli.docker_client import docker_client
 from compose.cli.main import run_one_off_container
 
 import dockerpty
+import sys
+
 
 class Target(object):
     def __init__(self, config):
         self.config = config
+        self.project = Project.from_dicts('construi', config.services, docker_client())
 
     def run(self):
-        project = self.create_project()
+        succeded = False
 
         try:
-            console.progress('Building Images...')
-            project.build()
+            self.setup()
 
-            console.progress('Pulling Images...')
-            project.pull()
-
-            #project.up()
-
-            service = project.get_service(self.config.construi['name'])
+            service = self.project.get_service(self.config.construi['name'])
 
             for cmd in self.config.construi['run']:
                 console.progress("> %s" % cmd)
                 container = service.create_container(one_off=True, command=cmd, tty=False, stdin_open=True, detach=False)
-                dockerpty.start(project.client, container.id, interactive=False)
-                container.wait()
-                project.client.remove_container(container.id, force=True)
+                dockerpty.start(self.project.client, container.id, interactive=False)
+                exit_code = container.wait()
+                self.project.client.remove_container(container.id, force=True)
+
+                if exit_code != 0:
+                    console.error("\nBuild Failed.")
+                    sys.exit(1)
+
+            console.progress('Done.')
+        except KeyboardInterrupt:
+            console.warn("\nBuild Interrupted.")
+            sys.exit(1)
 
         finally:
-            console.progress('Cleaning up...')
-            project.kill()
-            project.remove_stopped(None, v=True)
+            self.cleanup()
 
-        console.progress('Done.')
 
-    def create_project(self):
-        return Project.from_dicts('construi', self.config.services, docker_client())
+    def setup(self):
+        console.progress('Building Images...')
+        self.project.build()
+
+        console.progress('Pulling Images...')
+        self.project.pull()
+
+    def cleanup(self):
+        console.progress('Cleaning up...')
+        self.project.kill()
+        self.project.remove_stopped(None, v=True)
+
+
+
 
