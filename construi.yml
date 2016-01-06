@@ -1,0 +1,4 @@
+image: python:3.5
+
+targets:
+  test: python setup.py test
