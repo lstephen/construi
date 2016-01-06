@@ -1,23 +1,4 @@
-image: python:2.7
+image: python:3.5
 
 targets:
-  test:
-    run:
-      - scripts/version.sh construi/__version__.py
-      - python setup.py test
-
-  release:
-    build: docker/release
-    environment:
-      - TWINE_USERNAME
-      - TWINE_PASSWORD
-    run:
-      # test
-      - scripts/version.sh construi/__version__.py
-      - python setup.py test
-      # clean
-      - rm -rf dist
-      # release
-      - python setup.py sdist
-      - /bin/bash -c "twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD"
-
+  test: python setup.py test

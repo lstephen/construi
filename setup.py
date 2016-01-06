@@ -14,7 +14,7 @@ def read(*parts):
 def find_version():
     version_match = re.search(
         r"^__version__ = ['\"]([^'\"]*)['\"]",
-        read('construi', '__version__.py'),
+        read('construi', '__init__.py'),
         re.M)
 
     if version_match:
