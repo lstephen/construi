@@ -29,3 +29,5 @@ def setup_logging():
     root_logger.addHandler(logging.StreamHandler(sys.stdout))
     root_logger.setLevel(logging.INFO)
 
+    logging.getLogger("requests").propagate = False
+
