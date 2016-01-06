@@ -4,3 +4,5 @@
 *.pyc
 dist
 __pycache__
+__version__.py
+.git-credentials
