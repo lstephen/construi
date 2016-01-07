@@ -18,6 +18,9 @@ class Config(object):
         self.working_dir = working_dir
         self.filename = filename
 
+    def __getattr__(self, name):
+        return self.yml[name]
+
     def for_target(self, target):
         config_files = [
             self.base_config(target),
@@ -33,13 +36,15 @@ class Config(object):
 
     def base_config(self, name):
         base_yml = dict(self.yml)
-        del base_yml['targets']
+
+        delete(base_yml, 'targets', 'default')
+
         return compose.ConfigFile(self.filename, {name: base_yml})
 
     def target_config(self, target):
         target_yml = self.target_yml(target)
 
-        del target_yml['run']
+        delete(target_yml, 'run')
 
         return compose.ConfigFile(self.filename, {target: target_yml})
 
@@ -66,3 +71,9 @@ class Config(object):
 
 class TargetConfig(namedtuple('_TargetConfig', 'construi services')):
     pass
+
+
+def delete(hsh, *keys):
+    for key in keys:
+        if key in hsh:
+            del hsh[key]
