@@ -18,5 +18,5 @@ targets:
       - rm -rf dist
       # release
       - python setup.py sdist
-      - /bin/bash -c "pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD"
+      - /bin/bash -c "pip install twine && twine upload dist/* -u \"$TWINE_USERNAME\" -p \"$TWINE_PASSWORD\""
 
