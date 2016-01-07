@@ -37,10 +37,21 @@ requires = {
     ]
 }
 
+summary='Use Docker to define your build environment'
+
 setup(
     name='construi',
     version=find_version(),
-    zip_safe=False,
+    url='https://github.com/lstephen/construi',
+    license='Apache License 2.0',
+
+    description=summary,
+    long_description=summary,
+
+    author='Levi Stephen',
+    author_email='Levi Stephen <levi.stephen@gmail.com>',
+
+    zip_safe=True,
 
     packages=['construi'],
 
@@ -53,4 +64,15 @@ setup(
             'construi=construi.cli:main',
         ]
     },
+
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4'
+    ]
 )
