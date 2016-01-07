@@ -25,6 +25,7 @@ def main():
 
     if args.list_targets:
         list_targets(config)
+        sys.exit(0)
 
     target = args.target or config.default
 
@@ -46,5 +47,3 @@ def list_targets(config):
 
     for target in targets:
         print(target)
-
-    sys.exit(0)
