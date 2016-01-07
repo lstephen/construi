@@ -3,7 +3,6 @@ import construi.console as console
 
 from compose.project import Project
 from compose.cli.docker_client import docker_client
-from compose.cli.main import run_one_off_container
 
 import dockerpty
 import sys
@@ -12,11 +11,10 @@ import sys
 class Target(object):
     def __init__(self, config):
         self.config = config
-        self.project = Project.from_dicts('construi', config.services, docker_client())
+        self.project = Project.from_dicts(
+            'construi', config.services, docker_client())
 
     def run(self):
-        succeded = False
-
         try:
             self.setup()
 
@@ -24,8 +22,17 @@ class Target(object):
 
             for cmd in self.config.construi['run']:
                 console.progress("> %s" % cmd)
-                container = service.create_container(one_off=True, command=cmd, tty=False, stdin_open=True, detach=False)
-                dockerpty.start(self.project.client, container.id, interactive=False)
+
+                container = service.create_container(
+                    one_off=True,
+                    command=cmd,
+                    tty=False,
+                    stdin_open=True,
+                    detach=False
+                )
+
+                dockerpty.start(
+                    self.project.client, container.id, interactive=False)
                 exit_code = container.wait()
                 self.project.client.remove_container(container.id, force=True)
 
@@ -41,7 +48,6 @@ class Target(object):
         finally:
             self.cleanup()
 
-
     def setup(self):
         console.progress('Building Images...')
         self.project.build()
@@ -53,7 +59,3 @@ class Target(object):
         console.progress('Cleaning up...')
         self.project.kill()
         self.project.remove_stopped(None, v=True)
-
-
-
-
