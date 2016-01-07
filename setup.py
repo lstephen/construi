@@ -37,7 +37,7 @@ requires = {
     ]
 }
 
-summary='Use Docker to define your build environment'
+summary = 'Use Docker to define your build environment'
 
 setup(
     name='construi',
