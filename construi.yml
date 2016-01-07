@@ -20,3 +20,5 @@ targets:
       - python setup.py sdist
       - scripts/twine.sh
 
+  flake8: python setup.py flake8
+
