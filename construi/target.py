@@ -14,39 +14,58 @@ class Target(object):
         self.project = Project.from_dicts(
             'construi', config.services, docker_client())
 
+    @property
+    def client(self):
+        return self.project.client
+
+    @property
+    def commands(self):
+        return self.config.construi['run']
+
+    @property
+    def name(self):
+        return self.config.construi['name']
+
+    @property
+    def service(self):
+        return self.project.get_service(self.name)
+
     def run(self):
         try:
             self.setup()
 
-            service = self.project.get_service(self.config.construi['name'])
-
-            for cmd in self.config.construi['run']:
-                console.progress("> %s" % cmd)
-
-                container = service.create_container(
-                    one_off=True,
-                    command=cmd,
-                    tty=False,
-                    stdin_open=True,
-                    detach=False
-                )
-
-                dockerpty.start(
-                    self.project.client, container.id, interactive=False)
-                exit_code = container.wait()
-                self.project.client.remove_container(container.id, force=True)
-
-                if exit_code != 0:
-                    console.error("\nBuild Failed.")
-                    sys.exit(1)
+            for command in self.commands:
+                self.run_command(command)
 
             console.progress('Done.')
+
         except KeyboardInterrupt:
             console.warn("\nBuild Interrupted.")
             sys.exit(1)
 
         finally:
             self.cleanup()
+
+    def run_command(self, command):
+        console.progress("> %s" % command)
+
+        container = self.service.create_container(
+            one_off=True,
+            command=command,
+            tty=False,
+            stdin_open=True,
+            detach=False
+        )
+
+        try:
+            dockerpty.start(self.client, container.id, interactive=False)
+
+            if container.wait() != 0:
+                console.error("\nBuild Failed.")
+                sys.exit(1)
+
+        finally:
+            self.client.remove_container(container.id, force=True)
 
     def setup(self):
         console.progress('Building Images...')
