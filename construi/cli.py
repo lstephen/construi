@@ -1,5 +1,6 @@
 from .config import parse
 from .target import Target
+from .__version__ import __version__
 
 from argparse import ArgumentParser
 
@@ -11,10 +12,11 @@ import sys
 def main():
     setup_logging()
 
-    parser = ArgumentParser(description='Run construi')
+    parser = ArgumentParser(prog='construi', description='Run construi')
 
     parser.add_argument('target', metavar='TARGET')
     parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
+    parser.add_argument('--version', action='version', version=__version__)
 
     args = parser.parse_args()
 
