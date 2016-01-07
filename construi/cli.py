@@ -14,7 +14,7 @@ def main():
 
     parser = ArgumentParser(prog='construi', description='Run construi')
 
-    parser.add_argument('target', metavar='TARGET')
+    parser.add_argument('target', metavar='TARGET', nargs='?')
     parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
     parser.add_argument('--version', action='version', version=__version__)
 
@@ -22,9 +22,9 @@ def main():
 
     config = parse(args.basedir, 'construi.yml')
 
-    config.for_target(args.target)
+    target = args.target or config.default
 
-    Target(config.for_target(args.target)).run()
+    Target(config.for_target(target)).run()
 
 
 def setup_logging():
