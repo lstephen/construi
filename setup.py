@@ -30,8 +30,7 @@ requires = {
     ],
     'setup': [
         'flake8 == 2.5.1',
-        'pytest-runner == 2.6.2',
-        'twine == 1.6.5'
+        'pytest-runner == 2.6.2'
     ],
     'tests': [
         'pytest == 2.8.5'
