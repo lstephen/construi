@@ -21,7 +21,7 @@ def main():
 
     args = parser.parse_args()
 
-    config = load_config(args)
+    config = parse(args.basedir, 'construi.yml')
 
     if args.list_targets:
         list_targets(config)
@@ -29,10 +29,6 @@ def main():
     target = args.target or config.default
 
     Target(config.for_target(target)).run()
-
-
-def load_config(args):
-    return parse(args.basedir, 'construi.yml')
 
 
 def setup_logging():
