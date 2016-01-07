@@ -17,14 +17,22 @@ def main():
     parser.add_argument('target', metavar='TARGET', nargs='?')
     parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
     parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('-T', '--list-targets', action='store_true')
 
     args = parser.parse_args()
 
-    config = parse(args.basedir, 'construi.yml')
+    config = load_config(args)
+
+    if args.list_targets:
+        list_targets(config)
 
     target = args.target or config.default
 
     Target(config.for_target(target)).run()
+
+
+def load_config(args):
+    return parse(args.basedir, 'construi.yml')
 
 
 def setup_logging():
@@ -33,3 +41,14 @@ def setup_logging():
     root_logger.setLevel(logging.INFO)
 
     logging.getLogger("requests").propagate = False
+
+
+def list_targets(config):
+    targets = config.targets.keys()
+
+    targets.sort()
+
+    for target in targets:
+        print(target)
+
+    sys.exit(0)
