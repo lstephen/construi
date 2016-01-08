@@ -64,7 +64,7 @@ class Config(object):
         if type(yml) is str:
             yml = {'run': [yml]}
         if type(yml['run']) is str:
-            yml = {'run': [yml['run']]}
+            yml['run'] = [yml['run']]
 
         return yml.copy()
 
