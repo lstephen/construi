@@ -31,3 +31,27 @@ def test_for_target():
     }
 
     assert config == TargetConfig(expected_construi_config, [expected_service_config])
+
+def test_volumes():
+    working_dir = '/working/dir'
+
+    yml = yaml.load("""
+      image: java:latest
+      volumes:
+        - /a:/a
+
+      targets:
+        build:
+          volumes:
+            - /b:/b
+          run: run.sh
+    """)
+
+    config = Config(yml, working_dir).for_target('build')
+
+    print(config)
+
+    assert config.construi['run'] == ['run.sh']
+    assert len(config.services) == 1
+    assert VolumeSpec(external='/b', internal='/b', mode='rw') in config.services[0]['volumes']
+    assert VolumeSpec(external='/a', internal='/a', mode='rw') in config.services[0]['volumes']
