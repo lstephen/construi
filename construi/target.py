@@ -30,6 +30,15 @@ class Target(object):
     def service(self):
         return self.project.get_service(self.name)
 
+    def invoke(self, run_ctx):
+        console.progress("** Invoke %s" % self.name)
+
+        if run_ctx.dry_run:
+            console.progress("** Execute (dry run) %s" % self.name)
+        else:
+            console.progress("** Execute %s" % self.name)
+            self.run()
+
     def run(self):
         try:
             self.setup()
@@ -78,3 +87,9 @@ class Target(object):
         console.progress('Cleaning up...')
         self.project.kill()
         self.project.remove_stopped(None, v=True)
+
+
+class RunContext(object):
+    def __init__(self, dry_run=False):
+        self.dry_run = dry_run
+

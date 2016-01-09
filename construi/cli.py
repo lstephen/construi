@@ -1,4 +1,5 @@
 from .config import parse
+from .target import RunContext
 from .target import Target
 from .__version__ import __version__
 
@@ -12,14 +13,7 @@ import sys
 def main():
     setup_logging()
 
-    parser = ArgumentParser(prog='construi', description='Run construi')
-
-    parser.add_argument('target', metavar='TARGET', nargs='?')
-    parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
-    parser.add_argument('--version', action='version', version=__version__)
-    parser.add_argument('-T', '--list-targets', action='store_true')
-
-    args = parser.parse_args()
+    args = parse_args()
 
     config = parse(args.basedir, 'construi.yml')
 
@@ -29,7 +23,8 @@ def main():
 
     target = args.target or config.default
 
-    Target(config.for_target(target)).run()
+    Target(config.for_target(target)).invoke(RunContext(args.dry_run))
+
 
 
 def setup_logging():
@@ -38,6 +33,19 @@ def setup_logging():
     root_logger.setLevel(logging.INFO)
 
     logging.getLogger("requests").propagate = False
+
+
+def parse_args():
+    parser = ArgumentParser(prog='construi', description='Run construi')
+
+    parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
+    parser.add_argument('-n', '--dry-run', action='store_true')
+    parser.add_argument('-v', '--version', action='version', version=__version__)
+    parser.add_argument('-T', '--list-targets', action='store_true')
+
+    parser.add_argument('target', metavar='TARGET', nargs='?')
+
+    return parser.parse_args()
 
 
 def list_targets(config):
