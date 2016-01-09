@@ -23,8 +23,7 @@ def main():
 
     target = args.target or config.default
 
-    Target(config.for_target(target)).invoke(RunContext(args.dry_run))
-
+    Target(config.for_target(target)).invoke(RunContext(config, args.dry_run))
 
 
 def setup_logging():
@@ -40,8 +39,9 @@ def parse_args():
 
     parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
     parser.add_argument('-n', '--dry-run', action='store_true')
-    parser.add_argument('-v', '--version', action='version', version=__version__)
     parser.add_argument('-T', '--list-targets', action='store_true')
+    parser.add_argument(
+        '-v', '--version', action='version', version=__version__)
 
     parser.add_argument('target', metavar='TARGET', nargs='?')
 
