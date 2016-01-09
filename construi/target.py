@@ -15,6 +15,10 @@ class Target(object):
             'construi', config.services, docker_client())
 
     @property
+    def before(self):
+        return self.config.construi['before']
+
+    @property
     def client(self):
         return self.project.client
 
@@ -29,6 +33,24 @@ class Target(object):
     @property
     def service(self):
         return self.project.get_service(self.name)
+
+    def invoke(self, run_ctx):
+        console.progress("** Invoke %s" % self.name)
+
+        for target in self.before:
+            Target(run_ctx.config.for_target(target)).invoke(run_ctx)
+
+        if run_ctx.is_executed(self.name):
+            console.progress("** Skipped %s" % self.name)
+            return
+
+        dry_run = '(dry run)' if run_ctx.dry_run else ''
+        console.progress("** Execute %s %s" % (self.name, dry_run))
+
+        if not run_ctx.dry_run:
+            self.run()
+
+        run_ctx.mark_executed(self.name)
 
     def run(self):
         try:
@@ -78,3 +100,16 @@ class Target(object):
         console.progress('Cleaning up...')
         self.project.kill()
         self.project.remove_stopped(None, v=True)
+
+
+class RunContext(object):
+    def __init__(self, config, dry_run=False):
+        self.config = config
+        self.dry_run = dry_run
+        self.executed = set()
+
+    def mark_executed(self, target):
+        self.executed.add(target)
+
+    def is_executed(self, target):
+        return target in self.executed

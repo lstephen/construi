@@ -30,7 +30,13 @@ class Config(object):
 
         config_details = compose.ConfigDetails(self.working_dir, config_files)
 
-        construi = {'run': self.target_yml(target)['run'], 'name': target}
+        target_yml = self.target_yml(target)
+
+        construi = {
+            'before': target_yml['before'] if 'before' in target_yml else [],
+            'name': target,
+            'run': self.target_yml(target)['run']
+        }
 
         return TargetConfig(construi, compose.load(config_details))
 
@@ -44,7 +50,7 @@ class Config(object):
     def target_config(self, target):
         target_yml = self.target_yml(target)
 
-        delete(target_yml, 'run')
+        delete(target_yml, 'before', 'run')
 
         return compose.ConfigFile(self.filename, {target: target_yml})
 

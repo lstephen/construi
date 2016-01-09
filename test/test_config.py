@@ -19,6 +19,7 @@ def test_for_target():
     config = Config(yml, working_dir).for_target('build')
 
     expected_construi_config = {
+        'before': [],
         'name': 'build',
         'run': ['mvn install']
     }
