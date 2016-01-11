@@ -35,10 +35,17 @@ function tag {
   version=$(grep __version__ construi/__version__.py | cut -d "'" -f2)
   git_tag="v$version"
 
-  run "git tag $git_tag && git push origin $git_tag"
+  run git tag "$git_tag"
+  run git push origin "$git_tag"
 }
 
 setup_ssh
+
+echo "Publising..."
 publish
+
+echo "Tagging..."
 tag
+
+echo "Done."
 
