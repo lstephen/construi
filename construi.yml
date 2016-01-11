@@ -21,9 +21,12 @@ targets:
       - test
       - package
     environment:
+      - DRY_RUN
       - TWINE_USERNAME
       - TWINE_PASSWORD
-    run: scripts/twine.sh
+    volumes:
+      - $GIT_SSH_KEY:/ssh/id_rsa
+    run: scripts/release.sh
 
   flake8: python setup.py flake8
 
