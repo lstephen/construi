@@ -33,7 +33,8 @@ requires = {
         'pytest-runner == 2.6.2'
     ],
     'tests': [
-        'pytest == 2.8.5'
+        'pytest == 2.8.5',
+        'pytest-cov == 2.2.0'
     ]
 }
 
