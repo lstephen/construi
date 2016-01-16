@@ -43,26 +43,22 @@ class Config(object):
     def base_config(self, name):
         base_yml = dict(self.yml)
 
-        delete(base_yml, 'targets', 'default')
+        delete(base_yml, 'default', 'targets')
 
         return compose.ConfigFile(self.filename, {name: base_yml})
 
     def target_config(self, target):
         target_yml = self.target_yml(target)
 
-        delete(target_yml, 'before', 'run')
+        services = self.get_links(target_yml)
 
-        return compose.ConfigFile(self.filename, {target: target_yml})
+        delete(target_yml, 'before', 'links', 'run')
 
-    def workspace_config(self, name):
-        config = {
-            'working_dir': self.working_dir,
-            'volumes': [
-                "%s:%s" % (self.working_dir, self.working_dir)
-            ]
-        }
+        target_yml['links'] = services.keys()
 
-        return compose.ConfigFile(self.filename, {name: config})
+        services[target] = target_yml
+
+        return compose.ConfigFile(self.filename, services)
 
     def target_yml(self, target):
         yml = self.yml['targets'][target]
@@ -73,6 +69,24 @@ class Config(object):
             yml['run'] = [yml['run']]
 
         return yml.copy()
+
+    def get_links(self, yml):
+        links = {}
+
+        if 'links' in yml:
+            links = yml['links']
+
+        return links
+
+    def workspace_config(self, name):
+        config = {
+            'working_dir': self.working_dir,
+            'volumes': [
+                "%s:%s" % (self.working_dir, self.working_dir)
+            ]
+        }
+
+        return compose.ConfigFile(self.filename, {name: config})
 
 
 class TargetConfig(namedtuple('_TargetConfig', 'construi services')):

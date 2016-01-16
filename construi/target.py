@@ -3,6 +3,7 @@ import construi.console as console
 
 from compose.project import Project
 from compose.cli.docker_client import docker_client
+from compose.service import ConvergenceStrategy
 
 import dockerpty
 import sys
@@ -34,6 +35,12 @@ class Target(object):
     def service(self):
         return self.project.get_service(self.name)
 
+    @property
+    def linked_services(self):
+        return [
+            s['name'] for s in self.config.services if s['name'] != self.name
+        ]
+
     def invoke(self, run_ctx):
         console.progress("** Invoke %s" % self.name)
 
@@ -55,6 +62,8 @@ class Target(object):
     def run(self):
         try:
             self.setup()
+
+            self.start_linked_services()
 
             for command in self.commands:
                 self.run_command(command)
@@ -95,6 +104,13 @@ class Target(object):
 
         console.progress('Pulling Images...')
         self.project.pull()
+
+    def start_linked_services(self):
+        if self.linked_services:
+            self.project.up(
+                service_names=self.linked_services,
+                start_deps=True,
+                strategy=ConvergenceStrategy.always)
 
     def cleanup(self):
         console.progress('Cleaning up...')
