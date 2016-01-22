@@ -7,7 +7,17 @@ targets:
     image: lstephen/versiune:2
     run: -f python construi/__version__.py
 
-  test: python setup.py test
+  test_p27: python setup.py test
+
+  test_p34:
+    image: python:3.4
+    run: python setup.py test
+
+  test:
+    before:
+      - test_p27
+      - test_p34
+    run: echo 'Done'
 
   package:
     before:

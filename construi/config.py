@@ -54,7 +54,7 @@ class Config(object):
 
         delete(target_yml, 'before', 'links', 'run')
 
-        target_yml['links'] = services.keys()
+        target_yml['links'] = [s for s in services.keys()]
 
         services[target] = target_yml
 
