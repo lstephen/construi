@@ -6,14 +6,21 @@ from compose.cli.docker_client import docker_client
 from compose.service import ConvergenceStrategy
 
 import dockerpty
+import random
+import string
 import sys
 
 
 class Target(object):
     def __init__(self, config):
         self.config = config
+
+        random_seed = ''.join([
+            random.choice(string.letters + string.digits) for x in range(8)
+        ])
+
         self.project = Project.from_dicts(
-            'construi', config.services, docker_client())
+            "construi_%s" % random_seed, config.services, docker_client())
 
     @property
     def before(self):
