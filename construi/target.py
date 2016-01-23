@@ -16,7 +16,7 @@ class Target(object):
         self.config = config
 
         random_seed = ''.join([
-            random.choice(string.letters + string.digits) for x in range(8)
+            random.choice(string.ascii_lowercase + string.digits) for x in range(8)
         ])
 
         self.project = Project.from_dicts(
