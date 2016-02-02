@@ -35,7 +35,7 @@ class Config(object):
         construi = {
             'before': target_yml['before'] if 'before' in target_yml else [],
             'name': target,
-            'run': self.target_yml(target)['run']
+            'run': self.target_yml(target).get('run', [])
         }
 
         return TargetConfig(construi, compose.load(config_details))
@@ -65,7 +65,7 @@ class Config(object):
 
         if type(yml) is str:
             yml = {'run': [yml]}
-        if type(yml['run']) is str:
+        if 'run' in yml and type(yml['run']) is str:
             yml['run'] = [yml['run']]
 
         return yml.copy()

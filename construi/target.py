@@ -32,7 +32,7 @@ class Target(object):
 
     @property
     def commands(self):
-        return self.config.construi['run']
+        return self.config.construi.get('run', [])
 
     @property
     def name(self):
@@ -58,11 +58,12 @@ class Target(object):
             console.progress("** Skipped %s" % self.name)
             return
 
-        dry_run = '(dry run)' if run_ctx.dry_run else ''
-        console.progress("** Execute %s %s" % (self.name, dry_run))
+        if self.commands:
+            dry_run = '(dry run)' if run_ctx.dry_run else ''
+            console.progress("** Execute %s %s" % (self.name, dry_run))
 
-        if not run_ctx.dry_run:
-            self.run()
+            if not run_ctx.dry_run:
+                self.run()
 
         run_ctx.mark_executed(self.name)
 

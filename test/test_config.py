@@ -39,6 +39,23 @@ class TestConfig(object):
             VolumeSpec(external=self.working_dir, internal=self.working_dir, mode='rw')
         ]
 
+    def test_no_run(self):
+        yml = yaml.load("""
+          image: java:latest
+
+          targets:
+            build:
+              before:
+                - a
+                - b
+        """)
+
+        config = self.config(yml, 'build')
+
+        assert config.construi['before'] == ['a', 'b']
+        assert config.construi['run'] == []
+
+
     def test_volumes(self):
         yml = yaml.load("""
           image: java:latest
