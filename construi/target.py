@@ -10,17 +10,27 @@ import random
 import string
 import sys
 
+def generate_build_id():
+    v = 'aeiou'
+    c = 'bdfghjklmnprstvw'
+
+    return ''.join([random.choice(v if i%2 else c) for i in range(8)])
+
+
 
 class Target(object):
     def __init__(self, config):
         self.config = config
-
-        random_seed = ''.join([
-            random.choice(string.ascii_lowercase + string.digits) for x in range(8)
-        ])
-
         self.project = Project.from_dicts(
-            "construi_%s" % random_seed, config.services, docker_client())
+            "construi_%s" % Target.build_id(), config.services, docker_client())
+
+    @classmethod
+    def build_id(cls):
+        try:
+            return cls._build_id
+        except AttributeError:
+            cls._build_id = generate_build_id()
+            return cls._build_id
 
     @property
     def before(self):
