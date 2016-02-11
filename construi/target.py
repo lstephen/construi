@@ -22,7 +22,7 @@ class Target(object):
         self.config = config
         self.project = Project.from_config(
             "construi_%s" % Target.build_id(),
-            config.services,
+            config.compose,
             docker_client())
 
     @classmethod
