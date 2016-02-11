@@ -7,22 +7,23 @@ from compose.service import ConvergenceStrategy
 
 import dockerpty
 import random
-import string
 import sys
+
 
 def generate_build_id():
     v = 'aeiou'
     c = 'bdfghjklmnprstvw'
 
-    return ''.join([random.choice(v if i%2 else c) for i in range(8)])
-
+    return ''.join([random.choice(v if i % 2 else c) for i in range(8)])
 
 
 class Target(object):
     def __init__(self, config):
         self.config = config
-        self.project = Project.from_dicts(
-            "construi_%s" % Target.build_id(), config.services, docker_client())
+        self.project = Project.from_config(
+            "construi_%s" % Target.build_id(),
+            config.services,
+            docker_client())
 
     @classmethod
     def build_id(cls):
@@ -55,7 +56,7 @@ class Target(object):
     @property
     def linked_services(self):
         return [
-            s['name'] for s in self.config.services if s['name'] != self.name
+            s for s in self.project.service_names if s != self.name
         ]
 
     def invoke(self, run_ctx):

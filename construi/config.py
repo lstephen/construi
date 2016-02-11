@@ -89,8 +89,11 @@ class Config(object):
         return compose.ConfigFile(self.filename, {name: config})
 
 
-class TargetConfig(namedtuple('_TargetConfig', 'construi services')):
-    pass
+class TargetConfig(namedtuple('_TargetConfig', 'construi compose')):
+
+    @property
+    def services(self):
+        return self.compose.services
 
 
 def delete(hsh, *keys):
