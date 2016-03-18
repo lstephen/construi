@@ -3,13 +3,18 @@ image: python:2.7
 default: test
 
 targets:
-  version:
+  versiune:
     image: lstephen/versiune:2
     run: -f python construi/__version__.py
 
-  test_p27: python setup.py test
+  test_p27:
+    before:
+      - versiune
+    run: python setup.py test
 
   test_p34:
+    before:
+      - versiune
     image: python:3.4
     run: python setup.py test
 
@@ -21,7 +26,7 @@ targets:
 
   package:
     before:
-      - version
+      - versiune
     run:
       - rm -rf dist
       - python setup.py sdist
