@@ -1,9 +1,10 @@
+*.egg-info
+*.pyc
 .cache
 .coverage
 .eggs
-*.egg-info
-*.pyc
-dist
+.git-credentials
+VERSION
 __pycache__
 __version__.py
-.git-credentials
+dist
