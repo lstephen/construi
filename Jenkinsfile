@@ -21,11 +21,11 @@ def construi_on_node(target) {
 parallel(
   'Python 2.7': {
       stage 'Test Python 2.7'
-      construi_on_node 'test_py27'
+      construi_on_node 'test_p27'
     },
   'Python 3.4': {
     stage 'Test Python 3.4'
-    construi_on_node 'test_py34'
+    construi_on_node 'test_p34'
   })
 
 
