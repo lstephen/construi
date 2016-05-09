@@ -5,7 +5,9 @@ default: test
 targets:
   versiune:
     image: lstephen/versiune:2
-    run: -f python construi/__version__.py
+    run:
+      - VERSION
+      - -f python construi/__version__.py
 
   test_p27:
     before:
