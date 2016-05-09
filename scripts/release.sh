@@ -32,7 +32,7 @@ function publish {
 }
 
 function tag {
-  version=$(grep __version__ construi/__version__.py | cut -d "'" -f2)
+  version=$(cat VERSION)
   git_tag="v$version"
 
   run git tag "$git_tag"
