@@ -18,13 +18,12 @@ def construi_on_node(target) {
   }
 }
 
+stage 'Test'
 parallel(
   'Python 2.7': {
-      stage 'Test Python 2.7'
-      construi_on_node 'test_p27'
-    },
+    construi_on_node 'test_p27'
+  },
   'Python 3.4': {
-    stage 'Test Python 3.4'
     construi_on_node 'test_p34'
   })
 
@@ -34,6 +33,6 @@ stage 'Analyze'
 construi_on_node 'flake8'
 
 stage 'Package'
-construi_on_nocde 'package'
+construi_on_node 'package'
 
 
