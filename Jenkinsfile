@@ -11,22 +11,29 @@ def construi(target) {
   }
 }
 
-stage 'Test'
-node('construi') {
-  checkout scm
-  construi 'test'
+def construi_on_node(target) {
+  node('construi') {
+    checkout scm
+    construi target
+  }
 }
+
+parallel(
+  'Python 2.7': {
+      stage 'Test Python 2.7'
+      construi_on_node 'test_py27'
+    },
+  'Python 3.4': {
+    stage 'Test Python 3.4'
+    construi_on_node 'test_py34'
+  })
+
+
 
 stage 'Analyze'
-node ('construi') {
-  checkout scm
-  construi 'flake8'
-}
+construi_on_node 'flake8'
 
 stage 'Package'
-node ('construi') {
-  checkout scm
-  construi 'package'
-}
+construi_on_nocde 'package'
 
 
