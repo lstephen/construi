@@ -26,7 +26,7 @@ def find_version():
 requires = {
     'install': [
         'PyYAML == 3.11',
-        'docker-compose == 1.6.0'
+        'docker-compose == 1.7.0'
     ],
     'setup': [
         'flake8 == 2.5.1',
