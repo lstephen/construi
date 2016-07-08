@@ -50,7 +50,7 @@ setup(
     long_description=summary,
 
     author='Levi Stephen',
-    author_email='Levi Stephen <levi.stephen@gmail.com>',
+    author_email='levi.stephen@gmail.com',
 
     zip_safe=True,
 
