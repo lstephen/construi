@@ -35,7 +35,6 @@ targets:
 
   release:
     before:
-      - test
       - package
     environment:
       - DRY_RUN
