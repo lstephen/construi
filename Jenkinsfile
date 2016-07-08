@@ -53,6 +53,8 @@ if (env.BRANCH_NAME == 'master') {
         construi 'release'
     }
   }
+
+  build job: '../docker-construi/master', wait: false
 } else {
   stage 'Package'
   construi_on_node 'package'
