@@ -8,6 +8,7 @@ from compose.service import ConvergenceStrategy
 import dockerpty
 import random
 import sys
+import os
 
 
 def generate_build_id():
@@ -23,7 +24,7 @@ class Target(object):
         self.project = Project.from_config(
             "construi_%s" % Target.build_id(),
             config.compose,
-            docker_client())
+            docker_client(os.environ))
 
     @classmethod
     def build_id(cls):
