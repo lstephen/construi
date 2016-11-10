@@ -26,10 +26,10 @@ def find_version():
 requires = {
     'install': [
         'PyYAML == 3.11',
-        'docker-compose == 1.7.1'
+        'docker-compose == 1.8.1'
     ],
     'setup': [
-        'flake8 == 2.5.1',
+        'flake8 == 3.0.4',
         'pytest-runner == 2.6.2'
     ],
     'tests': [
