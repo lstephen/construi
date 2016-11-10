@@ -5,9 +5,12 @@ from .__version__ import __version__
 
 from argparse import ArgumentParser
 
+import construi.console as console
+
 import logging
 import os
 import sys
+import traceback
 
 
 def main():
@@ -22,8 +25,12 @@ def main():
         sys.exit(0)
 
     target = args.target or config.default
-
-    Target(config.for_target(target)).invoke(RunContext(config, args.dry_run))
+    try:
+        Target(config.for_target(target)).invoke(RunContext(config, args.dry_run))
+    except Exception, e:
+        console.error("\nUnexpected Error.\n")
+        traceback.print_exc()
+        sys.exit(1)
 
 
 def setup_logging():
