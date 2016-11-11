@@ -26,7 +26,8 @@ def main():
 
     target = args.target or config.default
     try:
-        Target(config.for_target(target)).invoke(RunContext(config, args.dry_run))
+        Target(config.for_target(target)).invoke(
+            RunContext(config, args.dry_run))
     except Exception, e:
         console.error("\nUnexpected Error: {}\n".format(e.msg))
         traceback.print_exc()
