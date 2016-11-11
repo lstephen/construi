@@ -89,7 +89,7 @@ class Config(object):
         return self.create_config_file({name: config})
 
     def create_config_file(self, yml):
-        return compose.ConfigFile(self.filename, yml)
+        return compose.ConfigFile(self.filename, { 'version': '2', 'services': yml })
 
 
 

@@ -125,6 +125,8 @@ class Target(object):
         console.progress('Pulling Images...')
         self.project.pull()
 
+        self.project.initialize()
+
     def start_linked_services(self):
         if self.linked_services:
             self.project.up(
