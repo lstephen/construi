@@ -5,6 +5,8 @@ from .__version__ import __version__
 
 from argparse import ArgumentParser
 
+from compose.errors import OperationFailedError
+
 import construi.console as console
 
 import logging
@@ -25,10 +27,11 @@ def main():
         sys.exit(0)
 
     target = args.target or config.default
+
     try:
         Target(config.for_target(target)).invoke(
             RunContext(config, args.dry_run))
-    except Exception, e:
+    except OperationFailedError, e:
         console.error("\nUnexpected Error: {}\n".format(e.msg))
         traceback.print_exc()
         sys.exit(1)
