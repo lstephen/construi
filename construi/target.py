@@ -1,4 +1,3 @@
-
 import construi.console as console
 
 from compose.project import Project
@@ -21,10 +20,9 @@ def generate_build_id():
 class Target(object):
     def __init__(self, config):
         self.config = config
-        self.project = Project.from_config(
-            "construi_%s" % Target.build_id(),
-            config.compose,
-            docker_client(os.environ))
+        self.project = Project.from_config("construi_%s" % Target.build_id(),
+                                           config.compose,
+                                           docker_client(os.environ))
 
     @classmethod
     def build_id(cls):
@@ -56,9 +54,7 @@ class Target(object):
 
     @property
     def linked_services(self):
-        return [
-            s for s in self.project.service_names if s != self.name
-        ]
+        return [s for s in self.project.service_names if s != self.name]
 
     def invoke(self, run_ctx):
         console.progress("** Invoke %s" % self.name)
@@ -105,8 +101,7 @@ class Target(object):
             command=command,
             tty=False,
             stdin_open=True,
-            detach=False
-        )
+            detach=False)
 
         try:
             dockerpty.start(self.client, container.id, interactive=False)
@@ -125,12 +120,13 @@ class Target(object):
         console.progress('Pulling Images...')
         self.project.pull()
 
+        self.project.initialize()
+
     def start_linked_services(self):
         if self.linked_services:
-            self.project.up(
-                service_names=self.linked_services,
-                start_deps=True,
-                strategy=ConvergenceStrategy.always)
+            self.project.up(service_names=self.linked_services,
+                            start_deps=True,
+                            strategy=ConvergenceStrategy.always)
 
     def cleanup(self):
         console.progress('Cleaning up...')

@@ -1,4 +1,3 @@
-
 import compose.config.config as compose
 
 import os
@@ -23,8 +22,7 @@ class Config(object):
 
     def for_target(self, target):
         config_files = [
-            self.base_config(target),
-            self.target_config(target),
+            self.base_config(target), self.target_config(target),
             self.workspace_config(target)
         ]
 
@@ -45,7 +43,7 @@ class Config(object):
 
         delete(base_yml, 'default', 'targets')
 
-        return compose.ConfigFile(self.filename, {name: base_yml})
+        return self.create_config_file({name: base_yml})
 
     def target_config(self, target):
         target_yml = self.target_yml(target)
@@ -58,7 +56,7 @@ class Config(object):
 
         services[target] = target_yml
 
-        return compose.ConfigFile(self.filename, services)
+        return self.create_config_file(services)
 
     def target_yml(self, target):
         yml = self.yml['targets'][target]
@@ -81,16 +79,18 @@ class Config(object):
     def workspace_config(self, name):
         config = {
             'working_dir': self.working_dir,
-            'volumes': [
-                "%s:%s" % (self.working_dir, self.working_dir)
-            ]
+            'volumes': ["%s:%s" % (self.working_dir, self.working_dir)]
         }
 
-        return compose.ConfigFile(self.filename, {name: config})
+        return self.create_config_file({name: config})
+
+    def create_config_file(self, yml):
+        return compose.ConfigFile(self.filename,
+                                  {'version': '2',
+                                   'services': yml})
 
 
 class TargetConfig(namedtuple('_TargetConfig', 'construi compose')):
-
     @property
     def services(self):
         return self.compose.services
