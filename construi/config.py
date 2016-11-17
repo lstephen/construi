@@ -38,12 +38,20 @@ class Config(object):
 
         return TargetConfig(construi, compose.load(config_details))
 
-    def base_config(self, name):
+    def base_config(self, target):
         base_yml = dict(self.yml)
 
         delete(base_yml, 'default', 'targets')
 
-        return self.create_config_file({name: base_yml})
+        # If the target specified build and/or image remove it from base.
+        # IMO this behavior is more intuitive for construi than the default
+        # merging behavior of the compose v2 schema.
+        target_yml = self.target_yml(target)
+
+        if 'build' in target_yml or 'image' in target_yml:
+            delete(base_yml, 'build', 'image')
+
+        return self.create_config_file({target: base_yml})
 
     def target_config(self, target):
         target_yml = self.target_yml(target)

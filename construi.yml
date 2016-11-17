@@ -47,6 +47,6 @@ targets:
   flake8: python setup.py flake8
 
   format:
-    run: /bin/bash -c "pip install yapf==0.13.1 && yapf --recursive --in-place construi/"
+    run: /bin/bash -c "pip install yapf==0.13.1 && yapf --recursive --in-place construi/ test/"
 
 
