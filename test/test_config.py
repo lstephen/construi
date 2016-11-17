@@ -1,16 +1,16 @@
-
 from construi.config import Config, TargetConfig
 
 from compose.config.types import VolumeSpec
 
+import os
 import sys
 import yaml
 
-class TestConfig(object):
 
+class TestConfig(object):
     @property
     def working_dir(self):
-        return '/working/dir'
+        return os.path.dirname(os.path.realpath(__file__))
 
     def config(self, yml, target):
         return Config(yml, self.working_dir).for_target(target)
@@ -36,8 +36,30 @@ class TestConfig(object):
         assert service['name'] == 'build'
         assert service['image'] == 'java:latest'
         assert service['volumes'] == [
-            VolumeSpec(external=self.working_dir, internal=self.working_dir, mode='rw')
+            VolumeSpec(
+                external=self.working_dir,
+                internal=self.working_dir,
+                mode='rw')
         ]
+
+    def test_build_and_image_handling(self):
+        yml = yaml.load("""
+          image: java:latest
+
+          targets:
+            target:
+              build: Dockerfile.dummy
+        """)
+
+        config = self.config(yml, 'target')
+
+        assert len(config.services) == 1
+
+        service = config.services[0]
+        assert 'image' not in service
+        assert service['build'] == {
+            'context': os.path.join(self.working_dir, 'Dockerfile.dummy')
+        }
 
     def test_no_run(self):
         yml = yaml.load("""
@@ -54,7 +76,6 @@ class TestConfig(object):
 
         assert config.construi['before'] == ['a', 'b']
         assert config.construi['run'] == []
-
 
     def test_volumes(self):
         yml = yaml.load("""
@@ -73,8 +94,12 @@ class TestConfig(object):
 
         assert config.construi['run'] == ['run.sh']
         assert len(config.services) == 1
-        assert VolumeSpec(external='/b', internal='/b', mode='rw') in config.services[0]['volumes']
-        assert VolumeSpec(external='/a', internal='/a', mode='rw') in config.services[0]['volumes']
+        assert VolumeSpec(
+            external='/b', internal='/b',
+            mode='rw') in config.services[0]['volumes']
+        assert VolumeSpec(
+            external='/a', internal='/a',
+            mode='rw') in config.services[0]['volumes']
 
     def test_links(self):
         yml = yaml.load("""
@@ -105,4 +130,3 @@ class TestConfig(object):
 
 def get_service(target_config, name):
     return next(s for s in target_config.services if s['name'] == name)
-
