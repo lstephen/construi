@@ -132,6 +132,7 @@ class Target(object):
         console.progress('Cleaning up...')
         self.project.kill()
         self.project.remove_stopped(None, v=True)
+        self.project.networks.remove()
 
 
 class RunContext(object):
