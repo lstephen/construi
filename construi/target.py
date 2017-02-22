@@ -1,4 +1,5 @@
 import construi.console as console
+import construi.utils as utils
 
 from compose.project import Project
 from compose.cli.docker_client import docker_client
@@ -128,11 +129,19 @@ class Target(object):
                             start_deps=True,
                             strategy=ConvergenceStrategy.always)
 
+    def save_image_name(self):
+        yml = utils.load_images_names(self.config.construi['working_dir'])
+        if self.name not in yml:
+            yml[self.name] = []
+        yml[self.name].append('%s_%s' % (self.project.name, self.name))
+        utils.save_images_names_to_file(self.config.construi['working_dir'], yml)
+
     def cleanup(self):
         console.progress('Cleaning up...')
         self.project.kill()
         self.project.remove_stopped(None, v=True)
         self.project.networks.remove()
+        self.save_image_name()
 
 
 class RunContext(object):
