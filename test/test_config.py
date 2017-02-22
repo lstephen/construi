@@ -1,8 +1,9 @@
-from construi.config import Config, TargetConfig
+from construi.config import Config, NoSuchTargetException, TargetConfig
 
 from compose.config.types import VolumeSpec
 
 import os
+import pytest
 import sys
 import yaml
 
@@ -41,6 +42,17 @@ class TestConfig(object):
                 internal=self.working_dir,
                 mode='rw')
         ]
+
+    def test_no_such_target(self):
+        yml = yaml.load("""
+          image: java:latest
+
+          targets:
+            build: mvn install
+        """)
+
+        with pytest.raises(NoSuchTargetException):
+            config = self.config(yml, 'does_not_exist')
 
     def test_build_and_image_handling(self):
         yml = yaml.load("""

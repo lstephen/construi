@@ -1,4 +1,4 @@
-from .config import parse
+from .config import parse, NoSuchTargetException
 from .target import RunContext
 from .target import Target
 from .__version__ import __version__
@@ -31,6 +31,9 @@ def main():
     try:
         Target(config.for_target(target)).invoke(
             RunContext(config, args.dry_run))
+    except NoSuchTargetException, e:
+        console.error("\nNo such target: {}\n".format(e.target))
+        sys.exit(1)
     except OperationFailedError, e:
         console.error("\nUnexpected Error: {}\n".format(e.msg))
         traceback.print_exc()
