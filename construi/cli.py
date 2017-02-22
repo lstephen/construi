@@ -8,11 +8,14 @@ from argparse import ArgumentParser
 from compose.errors import OperationFailedError
 
 import construi.console as console
+import construi.utils as utils
 
 import logging
 import os
 import sys
 import traceback
+import yaml
+import docker
 
 
 def main():
@@ -24,6 +27,10 @@ def main():
 
     if args.list_targets:
         list_targets(config)
+        sys.exit(0)
+
+    if args.clean_images:
+        clean_images(args.basedir)
         sys.exit(0)
 
     target = args.target or config.default
@@ -51,6 +58,7 @@ def parse_args():
     parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
     parser.add_argument('-n', '--dry-run', action='store_true')
     parser.add_argument('-T', '--list-targets', action='store_true')
+    parser.add_argument('-C', '--clean-images', action='store_true')
     parser.add_argument(
         '-v', '--version', action='version', version=__version__)
 
@@ -66,3 +74,33 @@ def list_targets(config):
 
     for target in targets:
         print(target)
+
+
+def clean_images(working_dir):
+    remaining_images = {}
+
+    yml = utils.load_images_names(working_dir)
+
+    if not yml:
+        console.info('Nothing to clean, quit')
+        sys.exit(0)
+
+    client = docker.from_env()
+
+    for target in yml:
+        for name in yml[target]:
+            console.progress("Cleaning %s ..." % name)
+
+            try:
+                client.images.remove(name)
+            except:
+                console.error("Failed to remove image %s" % name)
+                if target not in remaining_images:
+                    remaining_images[target] = []
+
+                remaining_images[target].append(name)
+                continue
+
+            console.info("Succeed to remove image %s" % name)
+
+    utils.save_images_names_to_file(working_dir, remaining_images)
