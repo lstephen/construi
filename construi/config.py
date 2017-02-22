@@ -11,6 +11,11 @@ def parse(working_dir, f):
         return Config(yaml.safe_load(config_file), working_dir, f)
 
 
+class NoSuchTargetException(Exception):
+    def __init__(self, target):
+        self.target = target
+
+
 class Config(object):
     def __init__(self, yml, working_dir=os.getcwd(), filename='construi.yml'):
         self.yml = yml
@@ -67,7 +72,10 @@ class Config(object):
         return self.create_config_file(services)
 
     def target_yml(self, target):
-        yml = self.yml['targets'][target]
+        try:
+            yml = self.yml['targets'][target]
+        except KeyError:
+            raise NoSuchTargetException(target)
 
         if type(yml) is str:
             yml = {'run': [yml]}
