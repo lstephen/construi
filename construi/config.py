@@ -33,7 +33,8 @@ class Config(object):
         construi = {
             'before': target_yml['before'] if 'before' in target_yml else [],
             'name': target,
-            'run': self.target_yml(target).get('run', [])
+            'run': self.target_yml(target).get('run', []),
+            'working_dir': self.working_dir
         }
 
         return TargetConfig(construi, compose.load(config_details))
