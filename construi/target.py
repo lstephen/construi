@@ -5,7 +5,6 @@ from compose.cli.docker_client import docker_client
 from compose.service import ConvergenceStrategy
 
 import dockerpty
-import random
 import sys
 import os
 import os.path
@@ -14,13 +13,10 @@ import os.path
 class Target(object):
     def __init__(self, config):
         self.config = config
-        self.project = Project.from_config(self.build_id,
-                                           config.compose,
-                                           docker_client(os.environ))
-
-    @property
-    def build_id(self):
-        return "construi_%s" % os.path.basename(self.config.construi['working_dir'])
+        self.project = Project.from_config(
+            "construi_%s" % self.config.construi['project_name'],
+            config.compose,
+            docker_client(os.environ))
 
     @property
     def before(self):

@@ -3,6 +3,8 @@ import compose.config.config as compose
 import os
 import yaml
 
+import os.path
+
 from collections import namedtuple
 
 
@@ -20,6 +22,10 @@ class Config(object):
     def __getattr__(self, name):
         return self.yml[name]
 
+    @property
+    def project_name(self):
+        return os.path.basename(self.working_dir)
+
     def for_target(self, target):
         config_files = [
             self.base_config(target), self.target_config(target),
@@ -34,7 +40,7 @@ class Config(object):
             'before': target_yml['before'] if 'before' in target_yml else [],
             'name': target,
             'run': self.target_yml(target).get('run', []),
-            'working_dir': self.working_dir
+            'project_name': self.project_name
         }
 
         return TargetConfig(construi, compose.load(config_details))
