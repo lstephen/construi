@@ -5,32 +5,18 @@ from compose.cli.docker_client import docker_client
 from compose.service import ConvergenceStrategy
 
 import dockerpty
-import random
 import sys
 import os
-
-
-def generate_build_id():
-    v = 'aeiou'
-    c = 'bdfghjklmnprstvw'
-
-    return ''.join([random.choice(v if i % 2 else c) for i in range(8)])
+import os.path
 
 
 class Target(object):
     def __init__(self, config):
         self.config = config
-        self.project = Project.from_config("construi_%s" % Target.build_id(),
-                                           config.compose,
-                                           docker_client(os.environ))
-
-    @classmethod
-    def build_id(cls):
-        try:
-            return cls._build_id
-        except AttributeError:
-            cls._build_id = generate_build_id()
-            return cls._build_id
+        self.project = Project.from_config(
+            "construi_%s" % self.config.construi['project_name'],
+            config.compose,
+            docker_client(os.environ))
 
     @property
     def before(self):
