@@ -15,8 +15,7 @@ class Target(object):
         self.config = config
         self.project = Project.from_config(
             "construi_%s" % self.config.construi['project_name'],
-            config.compose,
-            docker_client(os.environ))
+            config.compose, docker_client(os.environ))
 
     @property
     def before(self):
