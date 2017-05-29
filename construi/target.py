@@ -10,6 +10,11 @@ import os
 import os.path
 
 
+class BuildFailedException(Exception):
+    def __init__(self):
+        pass
+
+
 class Target(object):
     def __init__(self, config):
         self.config = config
@@ -71,10 +76,6 @@ class Target(object):
 
             console.progress('Done.')
 
-        except KeyboardInterrupt:
-            console.warn("\nBuild Interrupted.")
-            sys.exit(1)
-
         finally:
             self.cleanup()
 
@@ -92,7 +93,7 @@ class Target(object):
             dockerpty.start(self.client, container.id, interactive=False)
 
             if container.wait() != 0:
-                console.error("\nBuild Failed.")
+                raise BuildFailedException()
                 sys.exit(1)
 
         finally:
