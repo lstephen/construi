@@ -26,18 +26,18 @@ def main():
         list_targets(config)
         sys.exit(0)
 
-    target = args.target or config.default
+    targets = args.targets or (config.default, )
 
-    try:
-        Target(config.for_target(target)).invoke(
-            RunContext(config, args.dry_run))
-    except NoSuchTargetException, e:
-        console.error("\nNo such target: {}\n".format(e.target))
-        sys.exit(1)
-    except OperationFailedError, e:
-        console.error("\nUnexpected Error: {}\n".format(e.msg))
-        traceback.print_exc()
-        sys.exit(1)
+    verify_targets(config, targets)
+
+    for target in targets:
+        try:
+            Target(config.for_target(target)).invoke(
+                RunContext(config, args.dry_run))
+        except OperationFailedError, e:
+            console.error("\nUnexpected Error: {}\n".format(e.msg))
+            traceback.print_exc()
+            sys.exit(1)
 
 
 def setup_logging():
@@ -57,7 +57,7 @@ def parse_args():
     parser.add_argument(
         '-v', '--version', action='version', version=__version__)
 
-    parser.add_argument('target', metavar='TARGET', nargs='?')
+    parser.add_argument('targets', metavar='TARGETS', nargs='+')
 
     return parser.parse_args()
 
@@ -69,3 +69,12 @@ def list_targets(config):
 
     for target in targets:
         print(target)
+
+
+def verify_targets(config, targets):
+    wrong_targets = set(targets) - set(config.targets.keys())
+
+    if wrong_targets:
+        console.error("\nNo such targets: {}\n".format(",".join(
+            wrong_targets)))
+        sys.exit(1)
