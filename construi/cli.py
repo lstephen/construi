@@ -1,6 +1,5 @@
 from .config import parse, NoSuchTargetException
-from .target import RunContext
-from .target import Target
+from .target import BuildFailedException, RunContext, Target
 from .__version__ import __version__
 
 from argparse import ArgumentParser
@@ -31,6 +30,9 @@ def main():
     try:
         Target(config.for_target(target)).invoke(
             RunContext(config, args.dry_run))
+    except BuildFailedException:
+        console.error("\nBuild Failed.\n")
+        sys.exit(1)
     except NoSuchTargetException, e:
         console.error("\nNo such target: {}\n".format(e.target))
         sys.exit(1)
@@ -38,6 +40,11 @@ def main():
         console.error("\nUnexpected Error: {}\n".format(e.msg))
         traceback.print_exc()
         sys.exit(1)
+    except KeyboardInterrupt:
+        console.warn("\nBuild Interrupted.")
+        sys.exit(1)
+
+    console.info("\nBuild Succeeded.\n")
 
 
 def setup_logging():
