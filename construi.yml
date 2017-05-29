@@ -9,16 +9,14 @@ targets:
       - VERSION
       - -f python construi/__version__.py
 
-  test_p27:
+  test_p27: &test_p
     before:
       - versiune
     run: python setup.py test
 
   test_p34:
-    before:
-      - versiune
+    <<: *test_p
     image: python:3.4
-    run: python setup.py test
 
   test:
     before:
@@ -45,8 +43,6 @@ targets:
     run: scripts/release.sh
 
   flake8: python setup.py flake8
-
-  format:
-    run: /bin/bash -c "pip install yapf==0.13.1 && yapf --recursive --in-place construi/ test/"
+  format: python setup.py yapf
 
 

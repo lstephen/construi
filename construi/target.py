@@ -15,8 +15,7 @@ class Target(object):
         self.config = config
         self.project = Project.from_config(
             "construi_%s" % self.config.construi['project_name'],
-            config.compose,
-            docker_client(os.environ))
+            config.compose, docker_client(os.environ))
 
     @property
     def before(self):
@@ -110,9 +109,10 @@ class Target(object):
 
     def start_linked_services(self):
         if self.linked_services:
-            self.project.up(service_names=self.linked_services,
-                            start_deps=True,
-                            strategy=ConvergenceStrategy.always)
+            self.project.up(
+                service_names=self.linked_services,
+                start_deps=True,
+                strategy=ConvergenceStrategy.always)
 
     def cleanup(self):
         console.progress('Cleaning up...')
