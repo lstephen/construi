@@ -6,9 +6,9 @@ services:
 - docker
 
 before_install:
-- git fetch origin master
 - pip install --user construi
 
 script:
+- git fetch origin master
 - construi test
 
