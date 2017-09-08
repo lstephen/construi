@@ -17,7 +17,6 @@ deploy:
   on:
     tags: true
 
-
 env:
   global:
     - TWINE_USERNAME=levi.stephen

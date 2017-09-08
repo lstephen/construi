@@ -2,6 +2,9 @@ image: python:2.7
 
 default: test
 
+volumes:
+  - $PWD/.local:/root/.local
+
 targets:
   versiune:
     image: lstephen/versiune:2.0.0-RC1
@@ -11,7 +14,7 @@ targets:
 
   test_p27: &test_p
     before:
-      - versiune
+      - install
     run: python setup.py test
 
   test_p34:
@@ -23,9 +26,15 @@ targets:
       - test_p27
       - test_p34
 
-  package:
+  install:
     before:
       - versiune
+    run:
+      - python setup.py install --user
+
+  package:
+    before:
+      - install
     run:
       - rm -rf dist
       - python setup.py sdist
