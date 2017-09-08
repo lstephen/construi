@@ -6,6 +6,7 @@ services:
 - docker
 
 before_install:
+- git fetch origin master
 - pip install --user construi
 
 script:
