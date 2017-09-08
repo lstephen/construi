@@ -9,5 +9,5 @@ before_install:
 - pip install --user construi
 
 script:
-- construi build
+- construi test
 
