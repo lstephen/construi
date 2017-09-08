@@ -36,11 +36,8 @@ targets:
     environment:
       - TWINE_USERNAME
       - TWINE_PASSWORD
-
-    volumes:
-      - /root/.local
     run:
-      - /bin/sh -c "pip install twine && twine upload dist/* -u TWINE_USERNAME -p TWINE_PASSWORD"
+      - /bin/sh -c "pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD"
 
   flake8: python setup.py flake8
   format: python setup.py yapf
