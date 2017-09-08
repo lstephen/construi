@@ -1,6 +1,8 @@
 Construi
 ========
 
+[![Build Status](https://travis-ci.org/lstephen/construi.svg?branch=master)](https://travis-ci.org/lstephen/construi)
+
 Use docker to define your build environment.
 
 ## Installing

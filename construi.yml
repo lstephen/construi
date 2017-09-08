@@ -2,16 +2,19 @@ image: python:2.7
 
 default: test
 
+volumes:
+  - $PWD/.local:/root/.local
+
 targets:
   versiune:
-    image: lstephen/versiune:14
+    image: lstephen/versiune:2.0.0-RC1
     run:
       - VERSION
       - -f python construi/__version__.py
 
   test_p27: &test_p
     before:
-      - versiune
+      - install
     run: python setup.py test
 
   test_p34:
@@ -22,11 +25,16 @@ targets:
     before:
       - test_p27
       - test_p34
-    run: echo 'Done'
+
+  install:
+    before:
+      - versiune
+    run:
+      - python setup.py install --user
 
   package:
     before:
-      - versiune
+      - install
     run:
       - rm -rf dist
       - python setup.py sdist
@@ -35,12 +43,10 @@ targets:
     before:
       - package
     environment:
-      - DRY_RUN
       - TWINE_USERNAME
       - TWINE_PASSWORD
-    volumes:
-      - $GIT_SSH_KEY:/ssh/id_rsa
-    run: scripts/release.sh
+    run:
+      - /bin/sh -c "pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD"
 
   flake8: python setup.py flake8
   format: python setup.py yapf
