@@ -3,6 +3,12 @@ image: python:2.7
 default: test
 
 targets:
+  versiune:
+    image: lestpehen/versiune:2.0.0-RC1
+    run:
+      - VERSION
+      - -f python construi/__version__.py
+
   test_p27: &test_p
     run: python setup.py test
 
