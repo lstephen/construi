@@ -1,0 +1,13 @@
+sudo: required
+
+language: generic
+
+services:
+- docker
+
+before_install:
+- pip install construi
+
+script:
+- construi build
+
