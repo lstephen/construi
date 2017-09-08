@@ -34,12 +34,11 @@ targets:
     before:
       - package
     environment:
-      - DRY_RUN
       - TWINE_USERNAME
       - TWINE_PASSWORD
-    volumes:
-      - $GIT_SSH_KEY:/ssh/id_rsa
-    run: scripts/release.sh
+    run:
+      - pip install twine
+      - /bin/sh -c "twine upload dist/* -u TWINE_USERNAME -p TWINE_PASSWORD"
 
   flake8: python setup.py flake8
   format: python setup.py yapf
