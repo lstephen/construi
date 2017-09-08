@@ -96,3 +96,27 @@ could be added to run all tests in the example above:
       - integration
 ```
 
+## Travis CI
+
+Construi can be used as a build tool for your
+[Travis CI](https://travis-ci.org/) builds.
+Minimal .travis.yml:
+
+```
+sudo: required
+
+language: generic
+
+services:
+- docker
+
+before_install:
+- pip install --user construi
+
+script:
+- construi build
+```
+
+Construi itself uses Travis CI to build and deploy, so you can always check
+out its [.travis.yml](https://github.com/lstephen/construi/blob/master/.travis.yml)
+as well.
