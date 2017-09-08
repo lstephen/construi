@@ -4,12 +4,14 @@ default: test
 
 targets:
   versiune:
-    image: lestpehen/versiune:2.0.0-RC1
+    image: lstephen/versiune:2.0.0-RC1
     run:
       - VERSION
       - -f python construi/__version__.py
 
   test_p27: &test_p
+    before:
+      - versiune
     run: python setup.py test
 
   test_p34:
@@ -22,6 +24,8 @@ targets:
       - test_p34
 
   package:
+    before:
+      - versiune
     run:
       - rm -rf dist
       - python setup.py sdist
