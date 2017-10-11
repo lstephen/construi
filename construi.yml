@@ -48,7 +48,8 @@ targets:
     image: docker:17.07.0-ce
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    run: /bin/sh -c "docker build -t $DOCKER_PUSH_NAME:$(cat VERSION) --build-arg construi_version=$(cat VERSION) ."
+    shell: /bin/sh -c
+    run: docker build -t $DOCKER_PUSH_NAME:$(cat VERSION) --build-arg construi_version=$(cat VERSION) .
 
   release:
     before:
@@ -61,8 +62,8 @@ targets:
     environment:
       - TWINE_USERNAME
       - TWINE_PASSWORD
-    run:
-      - /bin/bash -c "pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD"
+    shell: /bin/bash -c
+    run: pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD"
 
   release-docker:
     before:
@@ -73,7 +74,8 @@ targets:
       - DOCKER_PUSH_PASSWORD
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    run: /bin/sh -c "docker login -u $DOCKER_PUSH_USERNAME -p $DOCKER_PUSH_PASSWORD
+    shell: /bin/sh -c
+    run: "docker login -u $DOCKER_PUSH_USERNAME -p $DOCKER_PUSH_PASSWORD
        && docker tag $DOCKER_PUSH_NAME:$(cat VERSION) $DOCKER_PUSH_NAME:latest
        && docker push $DOCKER_PUSH_NAME:$(cat VERSION)
        && docker push $DOCKER_PUSH_NAME:latest"
