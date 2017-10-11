@@ -45,6 +45,7 @@ class Config(object):
             'before': target_yml['before'] if 'before' in target_yml else [],
             'name': target,
             'run': self.target_yml(target).get('run', []),
+            'shell': self.target_yml(target).get('shell', None),
             'project_name': self.project_name
         }
 
@@ -70,7 +71,7 @@ class Config(object):
 
         services = self.get_links(target_yml)
 
-        delete(target_yml, 'before', 'links', 'run')
+        delete(target_yml, 'before', 'links', 'run', 'shell')
 
         target_yml['links'] = [s for s in services.keys()]
 
