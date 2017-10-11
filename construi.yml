@@ -63,7 +63,7 @@ targets:
       - TWINE_USERNAME
       - TWINE_PASSWORD
     shell: /bin/bash -c
-    run: pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD"
+    run: pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
 
   release-docker:
     before:
