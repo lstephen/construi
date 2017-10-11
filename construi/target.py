@@ -8,6 +8,7 @@ import dockerpty
 import sys
 import os
 import os.path
+import shlex
 
 
 class BuildFailedException(Exception):
@@ -37,6 +38,10 @@ class Target(object):
     @property
     def name(self):
         return self.config.construi['name']
+
+    @property
+    def shell(self):
+        return self.config.construi['shell']
 
     @property
     def service(self):
@@ -80,11 +85,16 @@ class Target(object):
             self.cleanup()
 
     def run_command(self, command):
-        console.progress("> %s" % command)
+        if self.shell:
+            to_run = shlex.split(self.shell) + [command]
+            console.progress("(%s)> %s" % (self.shell, command))
+        else:
+            to_run = command
+            console.progress("> %s" % command)
 
         container = self.service.create_container(
             one_off=True,
-            command=command,
+            command=to_run,
             tty=False,
             stdin_open=True,
             detach=False)

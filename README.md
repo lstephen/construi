@@ -85,6 +85,25 @@ targets:
 `APP_BASE_DIR` will be set in all targets, while the `DB_*` environment variables are only
 visible in the `integration` target.
 
+### Shell
+
+A target can specify a shell command to have the commands run in a shell.
+This is useful when shell commands and environment substitutions are needed.
+
+```
+image: python:2.7
+
+targets:
+  using-shell:
+    environment:
+      - TEXT=some text
+    shell: /bin/bash -c
+    run:
+      - echo $TEXT
+```
+
+### Task dependencies
+
 Construi allows specifying task dependencies using `before`. For example the following target
 could be added to run all tests in the example above:
 
