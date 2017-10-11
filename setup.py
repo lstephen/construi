@@ -39,10 +39,7 @@ class YapfCommand(distutils.cmd.Command):
 
 
 requires = {
-    'install': [
-        'PyYAML == 3.11', 'docker == 2.5.1', 'docker-compose == 1.11.2',
-        'six == 1.10.0'
-    ],
+    'install': ['PyYAML == 3.11', 'docker-compose == 1.11.2', 'six == 1.10.0'],
     'setup': ['flake8 == 3.0.4', 'pytest-runner == 2.6.2', 'yapf == 0.16.1'],
     'tests': ['pytest == 2.8.5', 'pytest-cov == 2.2.0']
 }

@@ -4,8 +4,6 @@ from compose.project import Project
 from compose.cli.docker_client import docker_client
 from compose.service import ConvergenceStrategy
 
-from docker.constants import MINIMUM_DOCKER_API_VERSION
-
 import dockerpty
 import sys
 import os
@@ -23,8 +21,7 @@ class Target(object):
         self.config = config
         self.project = Project.from_config(
             "construi_%s" % self.config.construi['project_name'],
-            config.compose,
-            docker_client(os.environ, version=MINIMUM_DOCKER_API_VERSION))
+            config.compose, docker_client(os.environ, version='auto'))
 
     @property
     def before(self):
