@@ -2,6 +2,9 @@ image: python:2.7
 
 default: test
 
+environment:
+  - DOCKER_PUSH_NAME=lstephen/construi
+
 volumes:
   - $PWD/.local:/root/.local
 
@@ -39,7 +42,21 @@ targets:
       - rm -rf dist
       - python setup.py sdist
 
+  docker:
+    before:
+      - package
+    image: docker:17.07.0-ce
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    shell: /bin/sh -c
+    run: docker build -t $DOCKER_PUSH_NAME:$(cat VERSION) --build-arg construi_version=$(cat VERSION) .
+
   release:
+    before:
+      - release-pypi
+      - release-docker
+
+  release-pypi:
     before:
       - package
     environment:
@@ -48,6 +65,21 @@ targets:
     shell: /bin/bash -c
     run:
       - pip install twine && twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
+
+  release-docker:
+    before:
+      - docker
+    image: docker:17.07.0-ce
+    environment:
+      - DOCKER_PUSH_USERNAME
+      - DOCKER_PUSH_PASSWORD
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    shell: /bin/sh -c
+    run: "docker login -u $DOCKER_PUSH_USERNAME -p $DOCKER_PUSH_PASSWORD
+       && docker tag $DOCKER_PUSH_NAME:$(cat VERSION) $DOCKER_PUSH_NAME:latest
+       && docker push $DOCKER_PUSH_NAME: $(cat VERSION)
+       && docker push $DOCKER_PUSH_NAME:latest"
 
   flake8: python setup.py flake8
   format: python setup.py yapf
