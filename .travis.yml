@@ -6,7 +6,7 @@ services:
 - docker
 
 before_install:
-- pip install --user construi
+- pip install --user -U construi
 
 script:
 - construi test
