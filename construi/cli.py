@@ -32,7 +32,8 @@ def main():
 
     target = args.target or config.default
 
-    os.environ['CONSTRUI_ARGS'] = ' '.join([quote(a) for a in args.construi_args])
+    os.environ['CONSTRUI_ARGS'] = ' '.join(
+        [quote(a) for a in args.construi_args])
 
     try:
         Target(config.for_target(target)).invoke(
