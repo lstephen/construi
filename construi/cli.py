@@ -41,10 +41,10 @@ def main():
     except BuildFailedException:
         console.error("\nBuild Failed.\n")
         sys.exit(1)
-    except NoSuchTargetException, e:
+    except NoSuchTargetException as e:
         console.error("\nNo such target: {}\n".format(e.target))
         sys.exit(1)
-    except OperationFailedError, e:
+    except OperationFailedError as e:
         console.error("\nUnexpected Error: {}\n".format(e.msg))
         traceback.print_exc()
         sys.exit(1)
