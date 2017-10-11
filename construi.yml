@@ -75,7 +75,7 @@ targets:
       - /var/run/docker.sock:/var/run/docker.sock
     run: /bin/sh -c "docker login -u $DOCKER_PUSH_USERNAME -p $DOCKER_PUSH_PASSWORD
        && docker tag $DOCKER_PUSH_NAME:$(cat VERSION) $DOCKER_PUSH_NAME:latest
-       && docker push $DOCKER_PUSH_NAME: $(cat VERSION)
+       && docker push $DOCKER_PUSH_NAME:$(cat VERSION)
        && docker push $DOCKER_PUSH_NAME:latest"
 
   flake8: python setup.py flake8
