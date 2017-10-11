@@ -13,6 +13,11 @@ import os
 import sys
 import traceback
 
+try:
+    from shlex import quote
+except ImportError:
+    from pipes import quote
+
 
 def main():
     setup_logging()
@@ -26,6 +31,8 @@ def main():
         sys.exit(0)
 
     target = args.target or config.default
+
+    os.environ['CONSTRUI_ARGS'] = ' '.join([quote(a) for a in args.construi_args])
 
     try:
         Target(config.for_target(target)).invoke(
@@ -65,6 +72,7 @@ def parse_args():
         '-v', '--version', action='version', version=__version__)
 
     parser.add_argument('target', metavar='TARGET', nargs='?')
+    parser.add_argument('construi_args', metavar='CONSTRUI_ARGS', nargs='*')
 
     return parser.parse_args()
 
