@@ -9,13 +9,13 @@ Use docker to define your build environment.
 
 Install construi using pip:
 
-```
+```bash
   > pip install construi
 ```
 
 ## Usage
 
-```
+```bash
   > construi [<target>]
 ```
 
@@ -100,6 +100,29 @@ targets:
     shell: /bin/bash -c
     run:
       - echo $TEXT
+```
+
+### CONSTRUI_ARGS
+
+Any parameters given on the construi command line after the target are
+available to be used by targets.
+They are passed in as the environment variable `CONSTRUI_ARGS`.
+
+```
+image: ruby:2.2.3
+
+targets:
+  rails:
+    environment:
+      - CONSTRUI_ARGS
+    shell: /bin/bash -c
+    run: rails $CONSTRUI_ARGS
+```
+
+This allows running targets such as
+
+```bash
+> construi rails g model User
 ```
 
 ### Task dependencies
