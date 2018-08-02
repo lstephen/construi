@@ -14,6 +14,7 @@ script:
 deploy:
   provider: script
   script: construi release
+  skip_cleanup: true
   on:
     tags: true
 
