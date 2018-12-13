@@ -2,6 +2,7 @@ Construi
 ========
 
 [![Build Status](https://travis-ci.org/lstephen/construi.svg?branch=master)](https://travis-ci.org/lstephen/construi)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flstephen%2Fconstrui.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flstephen%2Fconstrui?ref=badge_shield)
 
 Use docker to define your build environment.
 
@@ -162,3 +163,7 @@ script:
 Construi itself uses Travis CI to build and deploy, so you can always check
 out its [.travis.yml](https://github.com/lstephen/construi/blob/master/.travis.yml)
 as well.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flstephen%2Fconstrui.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flstephen%2Fconstrui?ref=badge_large)
