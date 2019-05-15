@@ -24,10 +24,15 @@ targets:
     <<: *test_p
     image: python:3.4
 
+  test_p37:
+    <<: *test_p
+    image: python:3.7
+
   test:
     before:
       - test_p27
       - test_p34
+      - test_p37
 
   install:
     before:
