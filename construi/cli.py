@@ -24,7 +24,7 @@ def main():
 
     args = parse_args()
 
-    config = parse(args.basedir, 'construi.yml')
+    config = parse(args.basedir, "construi.yml")
 
     if args.list_targets:
         list_targets(config)
@@ -32,12 +32,10 @@ def main():
 
     target = args.target or config.default
 
-    os.environ['CONSTRUI_ARGS'] = ' '.join(
-        [quote(a) for a in args.construi_args])
+    os.environ["CONSTRUI_ARGS"] = " ".join([quote(a) for a in args.construi_args])
 
     try:
-        Target(config.for_target(target)).invoke(
-            RunContext(config, args.dry_run))
+        Target(config.for_target(target)).invoke(RunContext(config, args.dry_run))
     except BuildFailedException:
         console.error("\nBuild Failed.\n")
         sys.exit(1)
@@ -64,16 +62,15 @@ def setup_logging():
 
 
 def parse_args():
-    parser = ArgumentParser(prog='construi', description='Run construi')
+    parser = ArgumentParser(prog="construi", description="Run construi")
 
-    parser.add_argument('--basedir', metavar='DIR', default=os.getcwd())
-    parser.add_argument('-n', '--dry-run', action='store_true')
-    parser.add_argument('-T', '--list-targets', action='store_true')
-    parser.add_argument(
-        '-v', '--version', action='version', version=__version__)
+    parser.add_argument("--basedir", metavar="DIR", default=os.getcwd())
+    parser.add_argument("-n", "--dry-run", action="store_true")
+    parser.add_argument("-T", "--list-targets", action="store_true")
+    parser.add_argument("-v", "--version", action="version", version=__version__)
 
-    parser.add_argument('target', metavar='TARGET', nargs='?')
-    parser.add_argument('construi_args', metavar='CONSTRUI_ARGS', nargs='*')
+    parser.add_argument("target", metavar="TARGET", nargs="?")
+    parser.add_argument("construi_args", metavar="CONSTRUI_ARGS", nargs="*")
 
     return parser.parse_args()
 
@@ -84,4 +81,4 @@ def list_targets(config):
     targets.sort()
 
     for target in targets:
-        print(target)
+        print (target)

@@ -20,12 +20,14 @@ class Target(object):
     def __init__(self, config):
         self.config = config
         self.project = Project.from_config(
-            "construi_%s" % self.config.construi['project_name'],
-            config.compose, docker_client(os.environ, version='auto'))
+            "construi_%s" % self.config.construi["project_name"],
+            config.compose,
+            docker_client(os.environ, version="auto"),
+        )
 
     @property
     def before(self):
-        return self.config.construi['before']
+        return self.config.construi["before"]
 
     @property
     def client(self):
@@ -33,15 +35,15 @@ class Target(object):
 
     @property
     def commands(self):
-        return self.config.construi.get('run', [])
+        return self.config.construi.get("run", [])
 
     @property
     def name(self):
-        return self.config.construi['name']
+        return self.config.construi["name"]
 
     @property
     def shell(self):
-        return self.config.construi['shell']
+        return self.config.construi["shell"]
 
     @property
     def service(self):
@@ -62,7 +64,7 @@ class Target(object):
             return
 
         if self.commands:
-            dry_run = '(dry run)' if run_ctx.dry_run else ''
+            dry_run = "(dry run)" if run_ctx.dry_run else ""
             console.progress("** Execute %s %s" % (self.name, dry_run))
 
             if not run_ctx.dry_run:
@@ -79,7 +81,7 @@ class Target(object):
             for command in self.commands:
                 self.run_command(command)
 
-            console.progress('Done.')
+            console.progress("Done.")
 
         finally:
             self.cleanup()
@@ -93,11 +95,8 @@ class Target(object):
             console.progress("> %s" % command)
 
         container = self.service.create_container(
-            one_off=True,
-            command=to_run,
-            tty=False,
-            stdin_open=True,
-            detach=False)
+            one_off=True, command=to_run, tty=False, stdin_open=True, detach=False
+        )
 
         try:
             dockerpty.start(self.client, container.id, interactive=False)
@@ -110,10 +109,10 @@ class Target(object):
             self.client.remove_container(container.id, force=True)
 
     def setup(self):
-        console.progress('Building Images...')
+        console.progress("Building Images...")
         self.project.build()
 
-        console.progress('Pulling Images...')
+        console.progress("Pulling Images...")
         self.project.pull()
 
         self.project.initialize()
@@ -123,10 +122,11 @@ class Target(object):
             self.project.up(
                 service_names=self.linked_services,
                 start_deps=True,
-                strategy=ConvergenceStrategy.always)
+                strategy=ConvergenceStrategy.always,
+            )
 
     def cleanup(self):
-        console.progress('Cleaning up...')
+        console.progress("Cleaning up...")
         self.project.kill()
         self.project.remove_stopped(None, v=True)
         self.project.networks.remove()
