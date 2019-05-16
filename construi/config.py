@@ -110,7 +110,7 @@ class Config(object):
 
     def create_config_file(self, yml):
         return compose.ConfigFile(self.filename,
-                                  {'version': '2',
+                                  {'version': '3',
                                    'services': yml})
 
 
