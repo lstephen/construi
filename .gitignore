@@ -5,6 +5,7 @@
 .eggs
 .git-credentials
 .local
+.mypy_cache
 VERSION
 __pycache__
 __version__.py
