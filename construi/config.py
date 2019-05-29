@@ -39,7 +39,7 @@ class Config(object):
         return os.path.basename(self.working_dir)
 
     def for_target(self, target):
-        #type: (str) -> TargetConfig
+        # type: (str) -> TargetConfig
         config_files = [
             self.base_config(target),
             self.target_config(target),
@@ -105,8 +105,8 @@ class Config(object):
         return yml.copy()
 
     def get_links(self, yml):
-        #type: (Dict[str, Any]) -> Dict[str, Any]
-        links = {} # type: Dict[str, Any]
+        # type: (Dict[str, Any]) -> Dict[str, Any]
+        links = {}  # type: Dict[str, Any]
 
         if "links" in yml:
             links = yml["links"]
@@ -114,7 +114,7 @@ class Config(object):
         return links
 
     def workspace_config(self, name):
-        #type: (str) -> compose.ConfigFile
+        # type: (str) -> compose.ConfigFile
         config = {
             "working_dir": self.working_dir,
             "volumes": ["%s:%s" % (self.working_dir, self.working_dir)],
@@ -135,7 +135,7 @@ class TargetConfig(namedtuple("_TargetConfig", "construi compose")):
 
 
 def delete(hsh, *keys):
-    #type: (Dict[str, Any], *str) -> None
+    # type: (Dict[str, Any], *str) -> None
     for key in keys:
         if key in hsh:
             del hsh[key]

@@ -14,7 +14,7 @@ import sys
 import traceback
 
 try:
-    from shlex import quote # type: ignore
+    from shlex import quote  # type: ignore
 except ImportError:
     from pipes import quote
 

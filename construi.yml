@@ -30,7 +30,7 @@ targets:
 
   test:
     before:
-      #- mypy
+      - mypy
       - test_p27
       - test_p34
       - test_p37

@@ -1,18 +1,17 @@
 import construi.console as console
 
+from .config import Config, TargetConfig
+
 from compose.project import Project
 from compose.cli.docker_client import docker_client
 from compose.service import ConvergenceStrategy
-
-from .config import Config, TargetConfig
+from typing import Any, List, Set, Union
 
 import dockerpty
 import sys
 import os
 import os.path
 import shlex
-
-from typing import Any, List, Set
 
 
 class BuildFailedException(Exception):
@@ -104,7 +103,7 @@ class Target(object):
     def run_command(self, command):
         # type: (str) -> None
         if self.shell:
-            to_run = shlex.split(self.shell) + [command]
+            to_run = shlex.split(self.shell) + [command]  # type: Union[str, List[str]]
             console.progress("(%s)> %s" % (self.shell, command))
         else:
             to_run = command
@@ -156,7 +155,7 @@ class RunContext(object):
         # type: (Config, bool) -> None
         self.config = config
         self.dry_run = dry_run
-        self.executed = set() # type: Set[str]
+        self.executed = set()  # type: Set[str]
 
     def mark_executed(self, target):
         # type: (str) -> None
