@@ -30,6 +30,7 @@ targets:
 
   test:
     before:
+      #- mypy
       - test_p27
       - test_p34
       - test_p37
@@ -89,5 +90,15 @@ targets:
     image: python:3.7
     shell: /bin/sh -c
     run: "pip install black && black -t py27 setup.py construi/ test/"
+
+  mypy:
+    build:
+      dockerfile: Dockerfile.mypy
+      context: .
+    run:
+      - --python-version 2.7 --strict --ignore-missing-imports construi/
+      - --python-version 3.4 --strict --ignore-missing-imports --no-warn-unused-ignores construi/
+      - --python-version 3.7 --strict --ignore-missing-imports --no-warn-unused-ignores construi/
+
 
 

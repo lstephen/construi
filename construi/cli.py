@@ -1,8 +1,8 @@
-from .config import parse, NoSuchTargetException
+from .config import parse, Config, NoSuchTargetException
 from .target import BuildFailedException, RunContext, Target
 from .__version__ import __version__
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 from compose.errors import OperationFailedError
 
@@ -14,12 +14,13 @@ import sys
 import traceback
 
 try:
-    from shlex import quote
+    from shlex import quote # type: ignore
 except ImportError:
     from pipes import quote
 
 
 def main():
+    # type: () -> None
     setup_logging()
 
     args = parse_args()
@@ -54,6 +55,7 @@ def main():
 
 
 def setup_logging():
+    # type: () -> None
     root_logger = logging.getLogger()
     root_logger.addHandler(logging.StreamHandler(sys.stdout))
     root_logger.setLevel(logging.INFO)
@@ -62,6 +64,7 @@ def setup_logging():
 
 
 def parse_args():
+    # type: () -> Namespace
     parser = ArgumentParser(prog="construi", description="Run construi")
 
     parser.add_argument("--basedir", metavar="DIR", default=os.getcwd())
@@ -76,6 +79,7 @@ def parse_args():
 
 
 def list_targets(config):
+    # type: (Config) -> None
     targets = config.targets.keys()
 
     targets.sort()

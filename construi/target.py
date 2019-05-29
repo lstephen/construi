@@ -4,20 +4,26 @@ from compose.project import Project
 from compose.cli.docker_client import docker_client
 from compose.service import ConvergenceStrategy
 
+from .config import Config, TargetConfig
+
 import dockerpty
 import sys
 import os
 import os.path
 import shlex
 
+from typing import Any, List, Set
+
 
 class BuildFailedException(Exception):
     def __init__(self):
+        # type: () -> None
         pass
 
 
 class Target(object):
     def __init__(self, config):
+        # type: (TargetConfig) -> None
         self.config = config
         self.project = Project.from_config(
             "construi_%s" % self.config.construi["project_name"],
@@ -27,33 +33,41 @@ class Target(object):
 
     @property
     def before(self):
+        # type: () -> Any
         return self.config.construi["before"]
 
     @property
     def client(self):
+        # type: () -> Any
         return self.project.client
 
     @property
     def commands(self):
+        # type: () -> Any
         return self.config.construi.get("run", [])
 
     @property
     def name(self):
+        # type: () -> Any
         return self.config.construi["name"]
 
     @property
     def shell(self):
+        # type: () -> Any
         return self.config.construi["shell"]
 
     @property
     def service(self):
+        # type: () -> Any
         return self.project.get_service(self.name)
 
     @property
     def linked_services(self):
+        # type: () -> Any
         return [s for s in self.project.service_names if s != self.name]
 
     def invoke(self, run_ctx):
+        # type: (RunContext) -> None
         console.progress("** Invoke %s" % self.name)
 
         for target in self.before:
@@ -73,6 +87,7 @@ class Target(object):
         run_ctx.mark_executed(self.name)
 
     def run(self):
+        # type: () -> None
         try:
             self.setup()
 
@@ -87,6 +102,7 @@ class Target(object):
             self.cleanup()
 
     def run_command(self, command):
+        # type: (str) -> None
         if self.shell:
             to_run = shlex.split(self.shell) + [command]
             console.progress("(%s)> %s" % (self.shell, command))
@@ -109,6 +125,7 @@ class Target(object):
             self.client.remove_container(container.id, force=True)
 
     def setup(self):
+        # type: () -> None
         console.progress("Building Images...")
         self.project.build()
 
@@ -118,6 +135,7 @@ class Target(object):
         self.project.initialize()
 
     def start_linked_services(self):
+        # type: () -> None
         if self.linked_services:
             self.project.up(
                 service_names=self.linked_services,
@@ -126,6 +144,7 @@ class Target(object):
             )
 
     def cleanup(self):
+        # type: () -> None
         console.progress("Cleaning up...")
         self.project.kill()
         self.project.remove_stopped(None, v=True)
@@ -134,12 +153,15 @@ class Target(object):
 
 class RunContext(object):
     def __init__(self, config, dry_run=False):
+        # type: (Config, bool) -> None
         self.config = config
         self.dry_run = dry_run
-        self.executed = set()
+        self.executed = set() # type: Set[str]
 
     def mark_executed(self, target):
+        # type: (str) -> None
         self.executed.add(target)
 
     def is_executed(self, target):
+        # type: (str) -> bool
         return target in self.executed
