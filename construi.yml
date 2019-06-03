@@ -20,9 +20,9 @@ targets:
       - install
     run: python setup.py test
 
-  test_p34:
+  test_p35:
     <<: *test_p
-    image: python:3.4
+    image: python:3.5
 
   test_p37:
     <<: *test_p
@@ -32,7 +32,7 @@ targets:
     before:
       - mypy
       - test_p27
-      - test_p34
+      - test_p35
       - test_p37
 
   install:

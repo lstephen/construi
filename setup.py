@@ -26,8 +26,9 @@ def find_version():
 requires = {
     "install": [
         "PyYAML == 3.13",
-        "docker-compose == 1.18.0",
+        "docker-compose == 1.24.0",
         "six == 1.10.0",
+        "requests == 2.14.2",
         "typing == 3.6.6 ; python_version<'3.5'",
     ],
     "setup": ["pytest-runner == 2.6.2"],
@@ -59,7 +60,6 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4"
         "Programming Language :: Python :: 3.5"
         "Programming Language :: Python :: 3.6"
         "Programming Language :: Python :: 3.7",
