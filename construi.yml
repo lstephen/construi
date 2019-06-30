@@ -42,7 +42,7 @@ targets:
     shell: /bin/bash -c
     run:
       - pip install --user behave==1.2.6
-      - pip install . && /root/.local/bin/behave --color
+      - pip install -e . && /root/.local/bin/behave
 
   test_integration_p35:
     <<: *test_integration_p
