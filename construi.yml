@@ -15,6 +15,16 @@ targets:
       - VERSION
       - -f python construi/__version__.py
 
+  test:
+    before:
+      - mypy
+      - test_p27
+      - test_p35
+      - test_p37
+      - test_integration_p27
+      - test_integration_p35
+      - test_integration_p37
+
   test_p27: &test_p
     before:
       - install
@@ -28,12 +38,19 @@ targets:
     <<: *test_p
     image: python:3.7
 
-  test:
-    before:
-      - mypy
-      - test_p27
-      - test_p35
-      - test_p37
+  test_integration_p27: &test_integration_p
+    shell: /bin/bash -c
+    run:
+      - pip install --user behave==1.2.6
+      - pip install . && /root/.local/bin/behave --color
+
+  test_integration_p35:
+    <<: *test_integration_p
+    image: python:3.5
+
+  test_integration_p37:
+    <<: *test_integration_p
+    image: python:3.7
 
   install:
     before:
@@ -89,7 +106,7 @@ targets:
   format:
     image: python:3.7
     shell: /bin/sh -c
-    run: "pip install black && black -t py27 setup.py construi/ test/"
+    run: "pip install black && black -t py27 setup.py construi/ test/ features/steps/"
 
   mypy:
     build:

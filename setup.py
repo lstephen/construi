@@ -27,7 +27,7 @@ requires = {
     "install": [
         "PyYAML == 3.13",
         "docker-compose == 1.24.0",
-        "six == 1.10.0",
+        "six == 1.11.0",
         "requests == 2.14.2",
         "typing == 3.6.6 ; python_version<'3.5'",
     ],
