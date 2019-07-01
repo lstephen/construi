@@ -87,9 +87,10 @@ targets:
        && docker push $DOCKER_PUSH_NAME:latest"
 
   format:
-    image: python:3.7
-    shell: /bin/sh -c
-    run: "pip install black && black -t py27 setup.py construi/ test/"
+    build:
+      dockerfile: Dockerfile.black
+      context: .
+    run: -t py27 setup.py construi/ test/
 
   mypy:
     build:
