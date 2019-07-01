@@ -82,7 +82,5 @@ def list_targets(config):
     # type: (Config) -> None
     targets = config.targets.keys()
 
-    targets.sort()
-
-    for target in targets:
+    for target in sorted(targets):
         print (target)

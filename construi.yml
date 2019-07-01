@@ -110,7 +110,7 @@ targets:
     build:
       dockerfile: Dockerfile.black
       context: .
-    run: -t py27 setup.py construi/ test/
+    run: -t py27 setup.py construi/ test/ features/
 
   mypy:
     build:
