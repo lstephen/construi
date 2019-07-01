@@ -1,4 +1,4 @@
-PyYAML == 3.13
+PyYAML == 4.2b4
 docker-compose == 1.24.0
 typing == 3.6.6 ; python_version<'3.5'
 
