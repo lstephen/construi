@@ -17,14 +17,13 @@ def find_version():
         return f.read()
 
 
+def install_requires():
+    with open("requirements.txt") as f:
+        return [r.strip() for r in f.readlines()]
+
+
 requires = {
-    "install": [
-        "PyYAML == 3.13",
-        "docker-compose == 1.24.0",
-        "six == 1.11.0",
-        "requests == 2.14.2",
-        "typing == 3.6.6 ; python_version<'3.5'",
-    ],
+    "install": install_requires(),
     "setup": ["pytest-runner == 2.6.2"],
     "tests": ["pytest == 2.8.5", "pytest-cov == 2.2.0"],
 }

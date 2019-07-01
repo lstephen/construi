@@ -106,16 +106,22 @@ targets:
        && docker push $DOCKER_PUSH_NAME:$(cat VERSION)
        && docker push $DOCKER_PUSH_NAME:latest"
 
+  requirements:
+    build:
+      dockerfile: Dockerfile.pip-compile
+      context: .construi
+    run: --output-file requirements.txt requirements.in
+
   format:
     build:
       dockerfile: Dockerfile.black
-      context: .
+      context: .construi
     run: -t py27 setup.py construi/ test/ features/
 
   mypy:
     build:
       dockerfile: Dockerfile.mypy
-      context: .
+      context: .construi
     run:
       - --python-version 2.7 --strict --ignore-missing-imports construi/
       - --python-version 3.4 --strict --ignore-missing-imports --no-warn-unused-ignores construi/
