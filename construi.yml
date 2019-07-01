@@ -10,11 +10,11 @@ volumes:
   - $PWD/.local:/root/.local
 
 targets:
-  versiune:
-    image: lstephen/versiune:2.0.0-RC1
+  set_version:
+    shell: /bin/bash -c
     run:
-      - VERSION
-      - -f python construi/__version__.py
+      - echo $(git describe --dirty --tags) > VERSION
+      - echo "__version__ = '$(cat VERSION)'" > construi/__version__.py
 
   test:
     before:
@@ -40,6 +40,8 @@ targets:
     image: python:3.7
 
   test_integration_p27: &test_integration_p
+    before:
+      - set_version
     shell: /bin/bash -c
     run:
       - pip install --user behave==1.2.6
@@ -55,7 +57,7 @@ targets:
 
   install:
     before:
-      - versiune
+      - set_version
     run:
       - python setup.py install --user
 

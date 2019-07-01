@@ -13,14 +13,8 @@ def read(*parts):
 
 
 def find_version():
-    version_match = re.search(
-        r"^__version__ = ['\"]([^'\"]*)['\"]", read("construi", "__version__.py"), re.M
-    )
-
-    if version_match:
-        return version_match.group(1)
-
-    raise RuntimeError("Unable to find version string.")
+    with open("VERSION") as f:
+        return f.read()
 
 
 requires = {
