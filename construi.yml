@@ -4,6 +4,7 @@ default: test
 
 environment:
   - DOCKER_PUSH_NAME=lstephen/construi
+  - PIP_CONFIG_FILE=$PWD/pip.conf
 
 volumes:
   - $PWD/.local:/root/.local
@@ -42,7 +43,7 @@ targets:
     shell: /bin/bash -c
     run:
       - pip install --user behave==1.2.6
-      - pip install -e . && /root/.local/bin/behave
+      - pip install . && /root/.local/bin/behave
 
   test_integration_p35:
     <<: *test_integration_p
