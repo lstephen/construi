@@ -80,7 +80,7 @@ def parse_args():
 
 def list_targets(config):
     # type: (Config) -> None
-    targets = config.targets.keys()
+    targets = config.targets.keys() if config.targets else []
 
     for target in sorted(targets):
         print (target)
