@@ -6,14 +6,19 @@ import yaml
 import os.path
 
 from collections import namedtuple
-
 from typing import Any, Dict
+from yaml import YAMLError
 
 
 def parse(working_dir, f):
     # type: (str, str) -> Config
-    with open(os.path.join(working_dir, f), "r") as config_file:
-        return Config(yaml.safe_load(config_file), working_dir, f)
+    try:
+        with open(os.path.join(working_dir, f), "r") as config_file:
+            return Config(yaml.safe_load(config_file), working_dir, f)
+    except IOError:
+        raise ConfigException("Could not read construi.yml")
+    except YAMLError as e:
+        raise ConfigException(str(e))
 
 
 class NoSuchTargetException(Exception):
@@ -21,11 +26,16 @@ class NoSuchTargetException(Exception):
         # type: (str) -> None
         self.target = target
 
+class ConfigException(Exception):
+    def __init__(self, msg):
+        # type: (str) -> None
+        self.msg = msg
+
 
 class Config(object):
     def __init__(self, yml, working_dir=os.getcwd(), filename="construi.yml"):
         # type: (Dict[str, Any], str, str) -> None
-        self.yml = yml
+        self.yml = yml or {}
         self.working_dir = working_dir
         self.filename = filename
 
@@ -37,6 +47,7 @@ class Config(object):
     def project_name(self):
         # type: () -> str
         return os.path.basename(self.working_dir)
+
 
     def for_target(self, target):
         # type: (str) -> TargetConfig
@@ -93,6 +104,9 @@ class Config(object):
     def target_yml(self, target):
         # type: (str) -> Any
         try:
+            if not self.yml["targets"]:
+                raise NoSuchTargetException(target)
+
             yml = self.yml["targets"][target]
         except KeyError:
             raise NoSuchTargetException(target)

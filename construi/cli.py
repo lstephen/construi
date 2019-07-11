@@ -1,4 +1,4 @@
-from .config import parse, Config, NoSuchTargetException
+from .config import parse, Config, NoSuchTargetException, ConfigException
 from .target import BuildFailedException, RunContext, Target
 from .__version__ import __version__
 
@@ -25,7 +25,11 @@ def main():
 
     args = parse_args()
 
-    config = parse(args.basedir, "construi.yml")
+    try:
+        config = parse(args.basedir, "construi.yml")
+    except ConfigException as e:
+        console.error("\nConfiguration Error: {}\n".format(e.msg))
+        sys.exit(1)
 
     if args.list_targets:
         list_targets(config)
@@ -80,7 +84,7 @@ def parse_args():
 
 def list_targets(config):
     # type: (Config) -> None
-    targets = config.targets.keys()
+    targets = config.targets.keys() if config.targets else []
 
     for target in sorted(targets):
         print (target)
