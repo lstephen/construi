@@ -69,12 +69,17 @@ class Target(object):
         # type: (RunContext) -> None
         console.progress("** Invoke %s" % self.name)
 
-        for target in self.before:
-            Target(run_ctx.config.for_target(target)).invoke(run_ctx)
-
         if run_ctx.is_executed(self.name):
             console.progress("** Skipped %s" % self.name)
             return
+
+        if run_ctx.is_invoked(self.name):
+            raise ConfigException("Cyclic dependency detected when invoking {}".format(self.name))
+
+        run_ctx.mark_invoked(self.name)
+
+        for target in self.before:
+            Target(run_ctx.config.for_target(target)).invoke(run_ctx)
 
         if self.commands:
             dry_run = "(dry run)" if run_ctx.dry_run else ""
@@ -156,6 +161,15 @@ class RunContext(object):
         self.config = config
         self.dry_run = dry_run
         self.executed = set()  # type: Set[str]
+        self.invoked = set() # type: Set[str]
+
+    def mark_invoked(self, target):
+        # type: (str) -> None
+        self.invoked.add(target)
+
+    def is_invoked(self, target):
+        # type: (str) -> bool
+        return target in self.invoked
 
     def mark_executed(self, target):
         # type: (str) -> None
