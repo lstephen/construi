@@ -42,6 +42,8 @@ targets:
   test_integration_p27: &test_integration_p
     before:
       - set_version
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     shell: /bin/bash -c
     run:
       - pip install --user behave==1.2.6

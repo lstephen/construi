@@ -6,7 +6,7 @@ import yaml
 import os.path
 
 from collections import namedtuple
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 from yaml import YAMLError
 
 
@@ -25,6 +25,7 @@ class NoSuchTargetException(Exception):
     def __init__(self, target):
         # type: (str) -> None
         self.target = target
+
 
 class ConfigException(Exception):
     def __init__(self, msg):
@@ -46,8 +47,7 @@ class Config(object):
     @property
     def project_name(self):
         # type: () -> str
-        return os.path.basename(self.working_dir)
-
+        return os.path.basename(self.working_dir).lower()
 
     def for_target(self, target):
         # type: (str) -> TargetConfig
@@ -61,13 +61,13 @@ class Config(object):
 
         target_yml = self.target_yml(target)
 
-        construi = {
-            "before": target_yml["before"] if "before" in target_yml else [],
-            "name": target,
-            "run": self.target_yml(target).get("run", []),
-            "shell": self.target_yml(target).get("shell", None),
-            "project_name": self.project_name,
-        }
+        construi = ConstruiConfig(
+            before=target_yml["before"] if "before" in target_yml else [],
+            name=target,
+            run=target_yml.get("run", []),
+            shell=target_yml.get("shell", None),
+            project_name=self.project_name,
+        )
 
         return TargetConfig(construi, compose.load(config_details))
 
@@ -115,6 +115,8 @@ class Config(object):
             yml = {"run": [yml]}
         if "run" in yml and type(yml["run"]) is str:
             yml["run"] = [yml["run"]]
+        if "run" in yml and yml["run"] is None:
+            yml["run"] = [""]
 
         return yml.copy()
 
@@ -141,7 +143,29 @@ class Config(object):
         return compose.ConfigFile(self.filename, {"version": "3", "services": yml})
 
 
-class TargetConfig(namedtuple("_TargetConfig", "construi compose")):
+class ConstruiConfig(object):
+    def __init__(
+        self,
+        before,  # type: List[str]
+        name,  # type: str
+        run,  # type: List[str]
+        shell,  # type: Optional[str]
+        project_name,  # type: str
+    ):
+        # type: (...) -> None
+        self.before = before
+        self.name = name
+        self.run = run
+        self.shell = shell
+        self.project_name = name
+
+
+class TargetConfig(object):
+    def __init__(self, construi, compose):
+        # type: (ConstruiConfig, compose.Config) -> None
+        self.construi = construi
+        self.compose = compose
+
     @property
     def services(self):
         # type: () -> Any
