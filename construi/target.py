@@ -1,11 +1,11 @@
 import construi.console as console
 
-from .config import Config, TargetConfig
+from .config import Config, ConfigException, TargetConfig
 
 from compose.project import Project
 from compose.cli.docker_client import docker_client
 from compose.service import ConvergenceStrategy
-from typing import Any, List, Set, Union
+from typing import Any, List, Optional, Set, Union
 
 import dockerpty
 import sys
@@ -25,15 +25,15 @@ class Target(object):
         # type: (TargetConfig) -> None
         self.config = config
         self.project = Project.from_config(
-            "construi_%s" % self.config.construi["project_name"],
+            "construi_%s" % self.config.construi.project_name,
             config.compose,
             docker_client(os.environ, version="auto"),
         )
 
     @property
     def before(self):
-        # type: () -> Any
-        return self.config.construi["before"]
+        # type: () -> List[str]
+        return self.config.construi.before
 
     @property
     def client(self):
@@ -42,18 +42,18 @@ class Target(object):
 
     @property
     def commands(self):
-        # type: () -> Any
-        return self.config.construi.get("run", [])
+        # type: () -> List[str]
+        return self.config.construi.run
 
     @property
     def name(self):
-        # type: () -> Any
-        return self.config.construi["name"]
+        # type: () -> str
+        return self.config.construi.name
 
     @property
     def shell(self):
-        # type: () -> Any
-        return self.config.construi["shell"]
+        # type: () -> Optional[str]
+        return self.config.construi.shell
 
     @property
     def service(self):

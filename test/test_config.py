@@ -28,9 +28,9 @@ class TestConfig(object):
 
         config = self.config(yml, "build")
 
-        assert config.construi["before"] == []
-        assert config.construi["name"] == "build"
-        assert config.construi["run"] == ["mvn install"]
+        assert config.construi.before == []
+        assert config.construi.name == "build"
+        assert config.construi.run == ["mvn install"]
 
         assert len(config.services) == 1
 
@@ -91,8 +91,8 @@ class TestConfig(object):
 
         config = self.config(yml, "build")
 
-        assert config.construi["before"] == ["a", "b"]
-        assert config.construi["run"] == []
+        assert config.construi.before == ["a", "b"]
+        assert config.construi.run == []
 
     def test_volumes(self):
         yml = yaml.load(
@@ -111,7 +111,7 @@ class TestConfig(object):
 
         config = self.config(yml, "build")
 
-        assert config.construi["run"] == ["run.sh"]
+        assert config.construi.run == ["run.sh"]
         assert len(config.services) == 1
         assert (
             VolumeSpec(external="/b", internal="/b", mode="rw")
@@ -140,7 +140,7 @@ class TestConfig(object):
 
         print (config)
 
-        assert config.construi["run"] == ["run.sh"]
+        assert config.construi.run == ["run.sh"]
         assert len(config.services) == 2
 
         build = get_service(config, "build")

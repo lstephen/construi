@@ -1,6 +1,6 @@
 Feature: List targets
 
-  Scenario: Getting single target
+  Scenario: There is a single target
     Given a construi.yml file
       """
       targets:
@@ -14,7 +14,7 @@ Feature: List targets
 
       """
 
-  Scenario: Getting multiple targets
+  Scenario: There are multiple targets
     Given a construi.yml file
       """
       targets:
@@ -32,3 +32,13 @@ Feature: List targets
 
       """
 
+  Scenario: There are no targets
+    Given a construi.yml file
+      """
+      targets:
+      """
+    When running construi -T
+    Then it has an exit code of 0
+     And it outputs
+      """
+      """

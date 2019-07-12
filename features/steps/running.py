@@ -2,8 +2,15 @@ from behave import *
 
 import contextlib
 import os
+import re
 import shlex
 import subprocess
+
+ANSI_ESCAPE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
+
+
+def strip_ansi_codes(inp):
+    return ANSI_ESCAPE.sub("", inp)
 
 
 @contextlib.contextmanager
@@ -60,9 +67,17 @@ def outputs_version(context):
     )
 
 
+@then("the output is")
 @then("it outputs")
 def outputs(context):
-    assert context.output == context.text, "Expected: '%s'. Got: '%s'." % (
+    output = strip_ansi_codes(context.output)
+    assert output == context.text, "Expected: '%s'. Got: '%s'." % (context.text, output)
+
+
+@then("the output contains")
+def outputs(context):
+    output = strip_ansi_codes(context.output)
+    assert context.text in output, "Expected '%s' to contain '%s'." % (
+        output,
         context.text,
-        context.output,
     )
