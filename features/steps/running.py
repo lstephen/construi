@@ -75,9 +75,9 @@ def outputs(context):
 
 
 @then("the output contains")
-def outputs(context):
+def output_contains(context):
     output = strip_ansi_codes(context.output)
     assert context.text in output, "Expected '%s' to contain '%s'." % (
-        output,
         context.text,
+        output,
     )
