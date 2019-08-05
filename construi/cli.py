@@ -27,22 +27,21 @@ def main():
 
     try:
         config = parse(args.basedir, "construi.yml")
-    except ConfigException as e:
-        console.error("\nConfiguration Error: {}\n".format(e.msg))
-        sys.exit(1)
 
-    if args.list_targets:
-        list_targets(config)
-        sys.exit(0)
+        if args.list_targets:
+            list_targets(config)
+            sys.exit(0)
 
-    target = args.target or config.default
+        target = args.target or config.default
 
-    os.environ["CONSTRUI_ARGS"] = " ".join([quote(a) for a in args.construi_args])
+        os.environ["CONSTRUI_ARGS"] = " ".join([quote(a) for a in args.construi_args])
 
-    try:
         Target(config.for_target(target)).invoke(RunContext(config, args.dry_run))
     except BuildFailedException:
         console.error("\nBuild Failed.\n")
+        sys.exit(1)
+    except ConfigException as e:
+        console.error("\nConfiguration Error: {}\n".format(e.msg))
         sys.exit(1)
     except NoSuchTargetException as e:
         console.error("\nNo such target: {}\n".format(e.target))

@@ -78,6 +78,24 @@ def outputs(context):
 def output_contains(context):
     output = strip_ansi_codes(context.output)
     assert context.text in output, "Expected '%s' to contain '%s'." % (
-        context.text,
         output,
+        context.text,
+    )
+
+
+@then("the output contains only once")
+def output_contains(context):
+    output = strip_ansi_codes(context.output)
+    needle = context.text
+
+    idx = output.find(needle)
+
+    assert idx > 0, "Expected '%s' to contain '%s'." % (
+        output,
+        needle,
+    )
+
+    assert output[idx + 1:].find(needle) < 0, "Expected '%s' to contain only once '%s'." % (
+        output,
+        needle
     )
