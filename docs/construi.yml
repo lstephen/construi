@@ -1,0 +1,6 @@
+
+image: debian:jessie
+
+targets:
+  hello-world:
+    run: echo "Hello World"

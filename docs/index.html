@@ -1,0 +1,78 @@
+---
+layout: landing
+---
+
+<style>
+.ui.vertical.stripe {
+  padding: 8em 0em;
+}
+.ui.vertical.stripe h3 {
+  font-size: 2em;
+}
+.ui.vertical.stripe p + h3 {
+  margin-top: 3em;
+}
+.ui.vertical.stripe p {
+  font-size: 1.33em;
+}
+@media only screen and (max-width: 700px) {
+  .code_image { display: none !important; }
+}
+</style>
+
+<div class="ui inverted vertical masthead center aligned segment" style="min-height: 700px; padding: 1em 0em, background: rgb(2,0,36); background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(0,43,54,1) 100%);">
+  <div class="ui text container">
+    <h1 class="ui inverted header" style="margin-top: 3em; font-size: 4em;">Construi</h1>
+    <h2 style="font-weight: normal; margin-top:1.5em; margin-bottom:1.25em;">Use docker to define your build environment</h2>
+    <a href="getting_started.html"><div class="ui huge primary button">Get Started <i class="right arrow icon"></i></div></a>
+    <a href="https://github.com/lstephen/construi"><div class="ui huge button"><i class="github icon"></i>GitHub</div></a>
+  </div>
+</div>
+</div>
+
+<div class="ui vertical stripe segment">
+  <div class="ui middle aligned stackable grid container centered">
+    <div class="row">
+      <div class="eight wide column">
+        <h3 class="ui header">Repeatable builds. Everywhere.</h3>
+        <p>
+          Defining your build container in Docker means your build is run in the same environment everywhere.
+          Run the same build process, in the same environment, locally and in CI.
+        </p>
+      </div>
+      <div class="six wide column code_image">
+        <img src="images/repeatable_builds.png" class="code"/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="six wide float left column code_image">
+        <img src="images/integration_tests.png" class="code"/>
+      </div>
+      <div class="eight wide column">
+        <h3 class="ui header">Simpler integration testing.</h3>
+        <p>
+          Spin up a MongoDB instance just for your tests.
+          Drop in a Redis container to test your caching.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="eight wide column">
+        <h3 class="ui header">Test in multiple environments.</h3>
+        <p>
+          Run your tests in multiple environments.
+          Need to support python 2 and python 3?
+          MySQL and PostgreSQL?
+          No problem.
+        </p>
+      </div>
+      <div class="six wide column code_image">
+        <img src="images/multiple_environments.png" class="code"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui center aligned basic segment">
+    <a href="getting_started.html"><div class="ui huge primary button">Get Started <i class="right arrow icon"></i></div></a>
+  </div>
+</div>
