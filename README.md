@@ -17,6 +17,6 @@ Install construi using pip:
 
 See
 
-* [Getting Started](https://lstephen.github.io/construi/getting_started.html)
-* [User Guide](https://lstephen.github.io/construi/user_guide.html)
+* [Getting Started](https://construi.org/getting_started.html)
+* [User Guide](https://construi.org/user_guide.html)
 
