@@ -129,5 +129,11 @@ targets:
       - --python-version 3.4 --strict --ignore-missing-imports --no-warn-unused-ignores construi/
       - --python-version 3.7 --strict --ignore-missing-imports --no-warn-unused-ignores construi/
 
-
+  site-serve:
+    build:
+      dockerfile: Dockerfile.gh-pages
+      context: .construi
+    ports:
+      - "4000:4000"
+    run: jekyll serve --source docs --host 0.0.0.0
 

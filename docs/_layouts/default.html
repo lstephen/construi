@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Construi</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pygments-rouge-css@0.1.0/default.css">
+
+    <style>
+div.highlight { overflow-x: auto }
+div..highlight pre { font-size: 85% }
+
+    </style>
+  </head>
+  <body>
+
+    {% include menu.html %}
+
+    <div class="ui main text container" style="margin-top: 7em">
+      {{ content }}
+    </div>
+
+  </body>
+</html>

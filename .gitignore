@@ -9,5 +9,6 @@
 VERSION
 __pycache__
 __version__.py
+_site
 build
 dist
