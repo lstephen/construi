@@ -1,17 +1,14 @@
 import logging
 import os
 import sys
-import traceback
 from argparse import ArgumentParser, Namespace
 
 import construi.console as console
-from compose.errors import OperationFailedError
-from compose.service import BuildError
-from docker.errors import APIError
 
 from .__version__ import __version__
-from .config import Config, ConfigException, NoSuchTargetException, parse
-from .target import BuildFailedException, RunContext, Target
+from .config import Config, parse
+from .errors import on_exception
+from .target import RunContext, Target
 
 try:
     from shlex import quote  # type: ignore
@@ -37,30 +34,10 @@ def main():
         os.environ["CONSTRUI_ARGS"] = " ".join([quote(a) for a in args.construi_args])
 
         Target(config.for_target(target)).invoke(RunContext(config, args.dry_run))
-    except BuildFailedException:
-        console.error("\nBuild Failed.\n")
-        sys.exit(1)
-    except ConfigException as e:
-        console.error("\nConfiguration Error: {}\n".format(e.msg))
-        sys.exit(1)
-    except NoSuchTargetException as e:
-        console.error("\nNo such target: {}\n".format(e.target))
-        sys.exit(1)
-    except BuildError:
-        console.error("\nError building docker image.\n")
-        sys.exit(1)
-    except OperationFailedError as e:
-        console.error("\nUnexpected Error: {}\n".format(e.msg))
-        traceback.print_exc()
-        sys.exit(1)
-    except APIError as e:
-        console.error("\nDocker Error: {}\n".format(e.explanation))
-        sys.exit(1)
-    except KeyboardInterrupt:
-        console.warn("\nBuild Interrupted.")
-        sys.exit(1)
-
-    console.info("\nBuild Succeeded.\n")
+    except Exception as e:
+        on_exception(e)
+    else:
+        console.info("\nBuild Succeeded.\n")
 
 
 def setup_logging():
