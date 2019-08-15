@@ -74,7 +74,9 @@ class Target(object):
             return
 
         if run_ctx.is_invoked(self.name):
-            raise ConfigException("Cyclic dependency detected when invoking {}".format(self.name))
+            raise ConfigException(
+                "Cyclic dependency detected when invoking {}".format(self.name)
+            )
 
         run_ctx.mark_invoked(self.name)
 
@@ -161,7 +163,7 @@ class RunContext(object):
         self.config = config
         self.dry_run = dry_run
         self.executed = set()  # type: Set[str]
-        self.invoked = set() # type: Set[str]
+        self.invoked = set()  # type: Set[str]
 
     def mark_invoked(self, target):
         # type: (str) -> None

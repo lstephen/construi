@@ -179,4 +179,3 @@ def delete(hsh, *keys):
     for key in keys:
         if key in hsh:
             del hsh[key]
-
