@@ -77,6 +77,8 @@ class Config(object):
 
         delete(base_yml, "default", "targets")
 
+        base_yml["environment"] = base_yml.get("environment", []) + ["CONSTRUI_ARGS"]
+
         # If the target specified build and/or image remove it from base.
         # IMO this behavior is more intuitive for construi than the default
         # merging behavior of the compose v2 schema.
@@ -177,3 +179,4 @@ def delete(hsh, *keys):
     for key in keys:
         if key in hsh:
             del hsh[key]
+

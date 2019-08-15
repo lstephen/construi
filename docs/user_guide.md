@@ -153,8 +153,6 @@ image: ruby:2.2.3
 
 targets:
   rails:
-    environment:
-      - CONSTRUI_ARGS
     shell: /bin/bash -c
     run: rails $CONSTRUI_ARGS
 ```
