@@ -90,12 +90,8 @@ def output_contains(context):
 
     idx = output.find(needle)
 
-    assert idx > 0, "Expected '%s' to contain '%s'." % (
-        output,
-        needle,
-    )
+    assert idx > 0, "Expected '%s' to contain '%s'." % (output, needle)
 
-    assert output[idx + 1:].find(needle) < 0, "Expected '%s' to contain only once '%s'." % (
-        output,
-        needle
-    )
+    assert (
+        output[idx + 1 :].find(needle) < 0
+    ), "Expected '%s' to contain only once '%s'." % (output, needle)
