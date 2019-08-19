@@ -68,3 +68,59 @@ Feature: Error messages
 
 
       """
+
+  Scenario: There is no such Dockerfile to build
+    Given a construi.yml file
+      """
+      build:
+        dockerfile: DoesNotExist
+        context: .
+
+      targets:
+        run: echo "Hello World"
+      """
+    When running construi run
+    Then it has an exit code of 1
+     And the output contains
+      """
+      Docker Error: Cannot locate specified Dockerfile: DoesNotExist
+      """
+
+  Scenario: There is a badly formatted Dockerfile
+    Given a Dockerfile file
+      """
+      garbage content
+      """
+      And a construi.yml file
+      """
+      build: .
+
+      targets:
+        run: echo "Hello World"
+      """
+    When running construi run
+    Then it has an exit code of 1
+     And the output contains
+      """
+      Docker Error: Dockerfile parse error line 1: unknown instruction: GARBAGE
+      """
+
+  Scenario: There is an error building the Dockerfile
+    Given a Dockerfile file
+      """
+      FROM alpine:3.10
+      RUN false
+      """
+      And a construi.yml file
+      """
+      build: .
+
+      targets:
+        run: echo "Hello World"
+      """
+    When running construi run
+    Then it has an exit code of 1
+     And the output contains
+      """
+      Error building docker image.
+      """
