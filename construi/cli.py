@@ -5,6 +5,8 @@ from .__version__ import __version__
 from argparse import ArgumentParser, Namespace
 
 from compose.errors import OperationFailedError
+from compose.service import BuildError
+from docker.errors import APIError
 
 import construi.console as console
 
@@ -46,9 +48,15 @@ def main():
     except NoSuchTargetException as e:
         console.error("\nNo such target: {}\n".format(e.target))
         sys.exit(1)
+    except BuildError:
+        console.error("\nError building docker image.\n")
+        sys.exit(1)
     except OperationFailedError as e:
         console.error("\nUnexpected Error: {}\n".format(e.msg))
         traceback.print_exc()
+        sys.exit(1)
+    except APIError as e:
+        console.error("\nDocker Error: {}\n".format(e.explanation))
         sys.exit(1)
     except KeyboardInterrupt:
         console.warn("\nBuild Interrupted.")
