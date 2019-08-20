@@ -1,6 +1,5 @@
 import os
 import os.path
-from collections import namedtuple
 from typing import Any, Dict, List, Optional
 
 import compose.config.config as compose

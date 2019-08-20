@@ -119,6 +119,7 @@ targets:
       dockerfile: Dockerfile.format
       context: .construi
     run:
+      - autoflake -ri --remove-all-unused-imports setup.py construi/ test/ features/
       - isort -rc setup.py construi/ test/ features/
       - black -t py27 setup.py construi/ test/ features/
 

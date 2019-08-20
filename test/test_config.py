@@ -1,10 +1,9 @@
 import os
-import sys
 
 import pytest
 import yaml
 from compose.config.types import VolumeSpec
-from construi.config import Config, NoSuchTargetException, TargetConfig
+from construi.config import Config, NoSuchTargetException
 
 
 class TestConfig(object):
