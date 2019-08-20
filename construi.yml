@@ -116,9 +116,9 @@ targets:
 
   format:
     build:
-      dockerfile: Dockerfile.black
+      dockerfile: Dockerfile.format
       context: .construi
-    run: -t py27 setup.py construi/ test/ features/
+    run: black -t py27 setup.py construi/ test/ features/
 
   mypy:
     build:
