@@ -1,12 +1,9 @@
-import compose.config.config as compose
-
 import os
-import yaml
-
 import os.path
-
-from collections import namedtuple
 from typing import Any, Dict, List, Optional
+
+import compose.config.config as compose
+import yaml
 from yaml import YAMLError
 
 
