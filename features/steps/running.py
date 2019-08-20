@@ -1,10 +1,10 @@
-from behave import *
-
 import contextlib
 import os
 import re
 import shlex
 import subprocess
+
+from behave import *
 
 ANSI_ESCAPE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 

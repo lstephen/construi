@@ -1,9 +1,9 @@
-from setuptools import find_packages, setup
-
 import codecs
 import distutils
 import os
 import re
+
+from setuptools import find_packages, setup
 
 
 def read(*parts):

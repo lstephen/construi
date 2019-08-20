@@ -1,19 +1,17 @@
-from .config import parse, Config, NoSuchTargetException, ConfigException
-from .target import BuildFailedException, RunContext, Target
-from .__version__ import __version__
-
-from argparse import ArgumentParser, Namespace
-
-from compose.errors import OperationFailedError
-from compose.service import BuildError
-from docker.errors import APIError
-
-import construi.console as console
-
 import logging
 import os
 import sys
 import traceback
+from argparse import ArgumentParser, Namespace
+
+import construi.console as console
+from compose.errors import OperationFailedError
+from compose.service import BuildError
+from docker.errors import APIError
+
+from .__version__ import __version__
+from .config import Config, ConfigException, NoSuchTargetException, parse
+from .target import BuildFailedException, RunContext, Target
 
 try:
     from shlex import quote  # type: ignore

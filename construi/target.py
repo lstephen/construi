@@ -1,17 +1,16 @@
-import construi.console as console
-
-from .config import Config, ConfigException, TargetConfig
-
-from compose.project import Project
-from compose.cli.docker_client import docker_client
-from compose.service import ConvergenceStrategy
-from typing import Any, List, Optional, Set, Union
-
-import dockerpty
-import sys
 import os
 import os.path
 import shlex
+import sys
+from typing import Any, List, Optional, Set, Union
+
+import construi.console as console
+import dockerpty
+from compose.cli.docker_client import docker_client
+from compose.project import Project
+from compose.service import ConvergenceStrategy
+
+from .config import Config, ConfigException, TargetConfig
 
 
 class BuildFailedException(Exception):
