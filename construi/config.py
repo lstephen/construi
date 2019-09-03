@@ -43,6 +43,7 @@ class Config(object):
 
     @property
     def default(self):
+        # type: () -> Any
         try:
             return self.yml["default"]
         except KeyError:
