@@ -103,6 +103,23 @@ Feature: Error messages
 
       """
 
+  Scenario: Default is configured as a list
+    Given a construi.yml file
+      """
+      default:
+        - build
+        - package
+      """
+    When running construi
+    Then it has an exit code of 1
+     And the output is
+      """
+
+      Configuration Error: default must be a single target name
+
+
+      """
+
 
   Scenario: There is no such Dockerfile to build
     Given a construi.yml file
