@@ -42,7 +42,7 @@ HANDLERS = {
     BuildError: show_error("Error building docker image."),
     NoSuchTargetException: show_error("No such target: {}", lambda e: e.target),
     ConfigException: show_error("Configuration Error: {}", lambda e: e.msg),
-    BuildFailedException: show_error("BUild Failed."),
+    BuildFailedException: show_error("Build Failed."),
 }  # type: Dict[Any, Callable[[Any], None]]
 
 

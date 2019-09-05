@@ -69,6 +69,41 @@ Feature: Error messages
 
       """
 
+
+  Scenario: There is no default target
+    Given a construi.yml file
+      """
+      targets:
+        package: echo "Hello World"
+      """
+    When running construi
+    Then it has an exit code of 1
+     And the output is
+      """
+
+      Configuration Error: No default target configured
+
+
+      """
+
+  Scenario: The target configured as the default does not exist
+    Given a construi.yml file
+      """
+      default: build
+      targets:
+        package: echo "Hello World"
+      """
+    When running construi
+    Then it has an exit code of 1
+     And the output is
+      """
+
+      No such target: build
+
+
+      """
+
+
   Scenario: There is no such Dockerfile to build
     Given a construi.yml file
       """

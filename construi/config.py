@@ -42,6 +42,14 @@ class Config(object):
         return self.yml[name]
 
     @property
+    def default(self):
+        # type: () -> Any
+        try:
+            return self.yml["default"]
+        except KeyError:
+            raise ConfigException("No default target configured")
+
+    @property
     def project_name(self):
         # type: () -> str
         return os.path.basename(self.working_dir).lower()
