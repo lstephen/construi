@@ -43,11 +43,15 @@ class Config(object):
 
     @property
     def default(self):
-        # type: () -> Any
+        # type: () -> str
         try:
-            return self.yml["default"]
+            default = self.yml["default"]
         except KeyError:
             raise ConfigException("No default target configured")
+        else:
+            if not isinstance(default, str):
+                raise ConfigException("default must be a single target name")
+            return default
 
     @property
     def project_name(self):
