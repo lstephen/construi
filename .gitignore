@@ -12,3 +12,4 @@ __version__.py
 _site
 build
 dist
+tags
