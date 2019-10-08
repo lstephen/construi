@@ -6,7 +6,8 @@ services:
 - docker
 
 before_install:
-- pip install --user .
+# pyopenssl to work around installation bug
+- pip install --user construi pyopenssl==19.0.0
 
 script:
 - construi test
