@@ -4,3 +4,4 @@ typing == 3.6.6 ; python_version<'3.5'
 
 # transitive
 functools32==3.2.3.post2 ; python_version<'3'
+pyOpenSSL>=16.2.0
