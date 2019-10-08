@@ -12,7 +12,7 @@ def read(*parts):
 
 def find_version():
     with open("VERSION") as f:
-        return f.read()
+        return f.read().strip()
 
 
 def install_requires():
